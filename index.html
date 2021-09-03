@@ -32,16 +32,20 @@
           <div class="h-2/6 w-full flex justify-center">
             <div id="dealer-cards" class="bg-green-700 h-full w-1/3">
               <div>
-                <span class="shadow text-2xl inline-block bg-red-600 rounded-full px-4 py-1 text-xl font-semibold text-white">Dealer</span>
+                <span class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">Dealer</span>
               </div>
               <div class="flex gap-2 align-center justify-center mt-3">
-                <div id="card" class="w-20 h-32 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/club.png" alt="" />
-                  <p class="text-2xl mt-2">10</p>
+                <div id="card" class="relative flex justify-center align-ceter w-20 h-32 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-10 m-auto" />
+                  <span class="absolute top-0 left-1 text-2xl mt-2">A</span>
                 </div>
-                <div id="card" class="w-20 h-32 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/heart.png" alt="" />
-                  <p class="text-2xl mt-2">A</p>
+                <div id="card" class="relative flex justify-center align-ceter w-20 h-32 bg-white rounded shadow text-center">
+                  <img src="/img/heart.png" class="h-10 m-auto" />
+                  <span class="absolute top-0 left-1 text-2xl mt-2">2</span>
+                </div>
+                <div id="card" class="relative flex justify-center align-ceter w-20 h-32 bg-white rounded shadow text-center">
+                  <img src="/img/diamond.png" class="h-10 m-auto" />
+                  <span class="absolute top-0 left-1 text-2xl mt-2">10</span>
                 </div>
               </div>
             </div>
@@ -49,31 +53,31 @@
           <div class="h-2/6 w-full flex justify-around">
             <div id="ai1-cards" class="h-full w-1/3">
               <div>
-                <span class="shadow text-2xl inline-block bg-blue-700 rounded-full px-4 py-1 text-xl font-semibold text-white">AI1</span>
+                <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">AI1</span>
               </div>
               <div class="flex gap-2 align-center justify-center mt-3">
-                <div id="ai-card" class="w-16 h-24 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/club.png" alt="" />
-                  <p class="text-2xl mt-2">10</p>
+                <div id="ai-card" class="relative flex justify-center align-ceter w-16 h-24 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-8 m-auto" />
+                  <span class="absolute top-0 left-1 text-xl mt-2">10</span>
                 </div>
-                <div id="ai-card" class="w-16 h-24 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/spade.png" alt="" />
-                  <p class="text-2xl mt-2">4</p>
+                <div id="ai-card" class="relative flex justify-center align-ceter w-16 h-24 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-8 m-auto" />
+                  <span class="absolute top-0 left-1 text-xl mt-2">10</span>
                 </div>
               </div>
             </div>
             <div id="ai2-cards" class="h-full w-1/3">
               <div>
-                <span class="shadow text-2xl inline-block bg-purple-600 rounded-full px-4 py-1 text-xl font-semibold text-white">AI2</span>
+                <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">AI2</span>
               </div>
               <div class="flex gap-2 align-center justify-center mt-3">
-                <div id="ai-card" class="w-16 h-24 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/heart.png" alt="" />
-                  <p class="text-2xl mt-2">J</p>
+                <div id="ai-card" class="relative flex justify-center align-ceter w-16 h-24 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-8 m-auto" />
+                  <span class="absolute top-0 left-1 text-xl mt-2">10</span>
                 </div>
-                <div id="ai-card" class="w-16 h-24 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/spade.png" alt="" />
-                  <p class="text-2xl mt-2">4</p>
+                <div id="ai-card" class="relative flex justify-center align-ceter w-16 h-24 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-8 m-auto" />
+                  <span class="absolute top-0 left-1 text-xl mt-2">10</span>
                 </div>
               </div>
             </div>
@@ -81,22 +85,27 @@
           <div class="h-2/6 w-full flex justify-center">
             <div id="player-cards" class="bg-green-700 h-full w-2/5">
               <div>
-                <span class="shadow text-2xl inline-block bg-yellow-500 rounded-full px-4 py-1 text-xl font-semibold text-white">User</span>
+                <span class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">User</span>
               </div>
               <div class="flex gap-2 align-center justify-center mt-3">
-                <div id="card" class="w-20 h-32 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/club.png" alt="" />
-                  <p class="text-2xl mt-2">10</p>
+                <div id="card" class="relative flex justify-center align-ceter w-20 h-32 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-10 m-auto" />
+                  <span class="absolute top-0 left-1 text-2xl mt-2">10</span>
                 </div>
-                <div id="card" class="w-20 h-32 px-4 py-4 bg-white rounded shadow text-center">
-                  <img src="/img/heart.png" alt="" />
-                  <p class="text-2xl mt-2">A</p>
+                <div id="card" class="relative flex justify-center align-ceter w-20 h-32 bg-white rounded shadow text-center">
+                  <img src="/img/club.png" class="h-10 m-auto" />
+                  <span class="absolute top-0 left-1 text-2xl mt-2">10</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div id="operation-space" class="fixed h-36 w-full bg-gray-500 opacity-40 bottom-0"></div>
+        <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-5 align-center">
+          <button class="rounded-full h-24 w-24 flex items-center justify-center bg-red-500 hover:bg-red-600 shadow-lg text-white text-sm">SURRENDER</button>
+          <button class="rounded-full h-24 w-24 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 shadow-lg text-white">STAND</button>
+          <button class="rounded-full h-24 w-24 flex items-center justify-center bg-blue-500 hover:bg-blue-600 shadow-lg text-white">HIT</button>
+          <button class="rounded-full h-24 w-24 flex items-center justify-center bg-purple-500 hover:bg-purple-600 shadow-lg text-white">DOUBLE</button>
+        </div>
       </section>
     </div>
     <script src="./dist/index.js"></script>
