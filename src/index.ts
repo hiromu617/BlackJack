@@ -1,3 +1,3 @@
-// import { Controller } from "./controllers/application_controller";
+import { Controller } from "./controllers/application_controller";
 
-// new Controller()
+new Controller()
