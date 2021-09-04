@@ -16,7 +16,7 @@
   \**********************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nvar Deck_1 = __webpack_require__(/*! ./model/Deck */ \"./src/model/Deck.ts\");\nvar deck = new Deck_1.Deck(\"brackjack\");\nconsole.log(deck.drawOne());\nconsole.log(deck.drawOne());\nconsole.log(deck.drawOne());\nconsole.log(deck.drawOne());\nconsole.log(deck.drawOne());\ndeck.shuffle();\ndeck.shuffle();\n\n\n//# sourceURL=webpack://brackjack/./src/index.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nvar Deck_1 = __webpack_require__(/*! ./model/Deck */ \"./src/model/Deck.ts\");\nnew Deck_1.Deck(\"brackjack\");\nnew Deck_1.Deck(\"brackjack\");\n\n\n//# sourceURL=webpack://brackjack/./src/index.ts?");
 
 /***/ }),
 
@@ -26,7 +26,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nvar 
   \***************************/
 /***/ ((__unused_webpack_module, exports) => {
 
-eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.Card = void 0;\nvar Card = /** @class */ (function () {\n    function Card(suit, rank) {\n        this.suit = suit;\n        this.rank = rank;\n    }\n    // カードのランクを数値で返す\n    Card.prototype.getRankNumber = function () {\n        // Aはとりあえず11を返す\n        if (this.rank === 'A')\n            return 11;\n        else if (this.rank === 'J' || this.rank === 'Q' || this.rank === 'K') {\n            return 10;\n        }\n        return this.rank;\n    };\n    return Card;\n}());\nexports.Card = Card;\n\n\n//# sourceURL=webpack://brackjack/./src/model/Card.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.Card = void 0;\nvar Card = /** @class */ (function () {\n    function Card(suit, rank) {\n        this.suit = suit;\n        this.rank = rank;\n        this.isDownCard = false;\n    }\n    // カードのランクを数値で返す\n    Card.prototype.getRankNumber = function () {\n        // Aはとりあえず11を返す\n        if (this.rank === 'A')\n            return 11;\n        else if (this.rank === 'J' || this.rank === 'Q' || this.rank === 'K') {\n            return 10;\n        }\n        return this.rank;\n    };\n    // カードを裏向きにする\n    Card.prototype.faceDown = function () {\n        this.isDownCard = true;\n    };\n    // カードを表向きにする\n    Card.prototype.faceUp = function () {\n        this.isDownCard = false;\n    };\n    return Card;\n}());\nexports.Card = Card;\n\n\n//# sourceURL=webpack://brackjack/./src/model/Card.ts?");
 
 /***/ }),
 
