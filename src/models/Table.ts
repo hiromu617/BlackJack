@@ -1,16 +1,19 @@
 import { Player } from './Player';
 import { Deck } from './Deck';
 
-class Table {
+export class Table {
   public turnCounter: number;
   public gamePhase: 'betting' | 'acting' | 'evaluatingWinner' | 'gameOver';
   public resultLog: string[];
-
-  constructor(public gameType: 'blackjack', public betDenomination: number[], public deck: Deck, public players: Player[]) {
+  public deck: Deck;
+  public players: Player[];
+  
+  constructor(public gameType: 'blackjack', public betDenomination: number[], name: string) {
     this.turnCounter = 0;
     this.gamePhase = 'betting';
     this.resultLog = [];
-    this.deck = deck;
+    this.deck = new Deck('blackjack');
+    this.players = [new Player(name, 'user', 'blackjack', 400), new Player('AI1', 'ai', 'blackjack', 400), new Player('AI2', 'ai', 'blackjack', 400), new Player('Dealer', 'house', 'blackjack')];
   }
 
   // playerにカードを２枚づつ配る
@@ -92,9 +95,9 @@ class Table {
 
   // 全てのプレイヤーのアクションが終了したかどうか
   allPlayerActionsResolved(): boolean {
-    this.players.forEach(player => {
-      if(!player.gameDecision) return false
-    })
+    this.players.forEach((player) => {
+      if (!player.gameDecision) return false;
+    });
     return true;
   }
 }

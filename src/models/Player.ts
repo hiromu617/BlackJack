@@ -5,9 +5,11 @@ type PlayerType = 'ai' | 'house' | 'user';
 export class Player {
   public winAmount: number;
   public gameDecision: GameDecision | null;
-  constructor(public name: string, public type: PlayerType, public gameType: string, public hand: Card[], public chips?: number) {
+  public hand: Card[]
+  constructor(public name: string, public type: PlayerType, public gameType: string, public chips?: number) {
     this.winAmount = 0;
     this.gameDecision = null
+    this.hand = []
   }
 
   promptPlayer(userData?: number): GameDecision {

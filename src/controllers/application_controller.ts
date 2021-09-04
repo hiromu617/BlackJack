@@ -1,9 +1,12 @@
 import { View } from '../views/application_view';
+import { Table } from '../models/Table';
 export class Controller {
   private view: View;
+  private table: Table | null;
   constructor() {
     this.view = new View(this);
     this.view.renderStartPage();
+    this.table = null;
   }
 
   public startGame(name: string, gameType: string){
@@ -13,6 +16,7 @@ export class Controller {
     }
     if(name === "") name = "User"
 
-    this.view.renderMainPage()
+    this.table = new Table("blackjack", [5, 10, 50, 100], name)
+    this.view.renderMainPage(name, this.table.betDenomination)
   }
 }

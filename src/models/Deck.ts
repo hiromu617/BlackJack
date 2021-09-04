@@ -3,7 +3,7 @@ import { Card, Suit } from './Card';
 export class Deck {
   cards: Card[];
 
-  constructor(readonly gameType: 'brackjack' | 'porker') {
+  constructor(readonly gameType: 'blackjack') {
     this.cards = [];
     this.resetDeck();
   }
