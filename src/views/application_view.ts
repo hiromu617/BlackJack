@@ -1,5 +1,5 @@
 import { Controller } from '../controllers/application_controller';
-
+import { Player } from '../models/Player';
 export class View {
   private root: HTMLElement;
   constructor(public controller: Controller) {
@@ -36,62 +36,24 @@ export class View {
     });
   }
 
-  public renderMainPage(name: string, betDenomination: number[]) {
+  public renderMainPage(betDenomination: number[], players: Player[]) {
     this.root.innerHTML = `
     <section class="w-full h-full flex justify-center align-center">
         <div class="container m-auto text-center h-4/5">
           <div class="h-2/6 w-full flex justify-center">
-            <div id="dealer-cards" class="bg-green-700 h-full w-1/3">
-              <div class="mb-2">
-                <span class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">Dealer</span>
-              </div>
-              <div class="h-4 flex justify-center items-center gap-2">
-                <span id="host-status" class="hidden rounded-full px-2 bg-pink-600 uppercase shadow-lg text-white text-sm">BUST</span>
-              </div>
-              <div class="flex gap-2 align-center justify-center mt-3">
-              </div>
+            <div id="house-container" class="h-full w-1/3">
             </div>
           </div>
           <div class="h-2/6 w-full flex justify-around">
             <div id="ai1-container" class="h-full w-1/3">
-              <div class="mb-2">
-                <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">AI1</span>
-              </div>
-              <div class="h-4 flex justify-center items-center gap-2">
-                <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-                <span id="ai1-money" class="text-white">400</span>
-                <span id="ai1-status" class="hidden rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>
-              </div>
-              <div id="ai1-cards" class="flex gap-2 align-center justify-center mt-3">
-              </div>
             </div>
             <div id="bet-space" class="h-full w-1/3 flex justify-center items-center gap-0">
             </div>
             <div id="ai2-container" class="h-full w-1/3">
-              <div class="mb-2">
-                <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">AI2</span>
-              </div>
-              <div class="h-4 flex justify-center items-center gap-2">
-                <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-                <span id="ai2-money" class="text-white">400</span>
-                <span id="ai2-status" class="hidden rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>
-              </div>
-              <div id="ai2-cards" class="flex gap-2 align-center justify-center mt-3">
-              </div>
             </div>
           </div>
           <div class="h-2/6 w-full flex justify-center">
-            <div id="player-container" class="bg-green-700 h-full w-2/5">
-              <div class="mb-2">
-                <span id="player-name" class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${name}</span>
-              </div>
-              <div class="h-4 flex justify-center items-center gap-2">
-                <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-                <span id="player-money" class="text-white">400</span>
-                <span id="player-status" class="hidden rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>
-              </div>
-              <div id="player-cards" class="flex gap-2 align-center justify-center mt-3">
-              </div>
+            <div id="user-container" class="bg-green-700 h-full w-2/5">
             </div>
           </div>
         </div>
@@ -103,6 +65,13 @@ export class View {
         </div>
       </section>
     `;
+
+    players.forEach((player) => {
+      if (player.type === 'house') this.renderHouse(player);
+      else if (player.type === 'ai1') this.renderAI1(player);
+      else if (player.type === 'ai2') this.renderAI2(player);
+      else this.renderUser(player);
+    });
 
     this.renderOperaion();
     // 400 start
@@ -222,5 +191,89 @@ export class View {
       betOperationSpace.classList.add('hidden');
       // TODO
     });
+  }
+
+  public renderHouse(player: Player) {
+    if (player.type !== 'house') return;
+    const houseContainer = document.getElementById('house-container');
+    if (!houseContainer) {
+      console.log('error in renderHouse');
+      return;
+    }
+    houseContainer.innerHTML = `
+    <div class="mb-2">
+      <span class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
+    </div>
+    <div id="host-status" class="h-4 flex justify-center items-center gap-2">
+    </div>
+    <div class="flex gap-2 align-center justify-center mt-3">
+    </div>
+    `;
+  }
+  public renderUser(player: Player) {
+    if (player.type !== 'user') return;
+    const userContainer = document.getElementById('user-container');
+    if (!userContainer) {
+      console.log('error in renderUser');
+      return;
+    }
+    userContainer.innerHTML = `
+    <div class="mb-2">
+      <span id="user-name" class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
+    </div>
+    <div class="h-4 flex justify-center items-center gap-2">
+      <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
+      <span id="user-money" class="text-white">${player.chips}</span>
+      <div id="user-status">
+      </div>
+    </div>
+    <div id="user-cards" class="flex gap-2 align-center justify-center mt-3">
+    </div>
+    `;
+  }
+
+  public renderAI1(player: Player) {
+    if (player.type !== 'ai1') return;
+    const aiContainer = document.getElementById('ai1-container');
+    if (!aiContainer) {
+      console.log('error in renderAi');
+      return;
+    }
+    aiContainer.innerHTML = `
+    <div class="mb-2">
+      <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">${player.name}</span>
+    </div>
+      <div class="h-4 flex justify-center items-center gap-2">
+        <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
+        <span id="ai1-money" class="text-white">${player.chips}</span>
+        <div id="ai1-status">
+        </div>
+      </div>
+    <div id="ai1-cards" class="flex gap-2 align-center justify-center mt-3">
+    </div>
+    `;
+  }
+
+  public renderAI2(player: Player) {
+    if (player.type !== 'ai2') return;
+    const aiContainer = document.getElementById('ai2-container');
+    if (!aiContainer) {
+      console.log('error in renderAi');
+      return;
+    }
+    aiContainer.innerHTML = `
+    <div class="mb-2">
+      <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">${player.name}</span>
+    </div>
+      <div class="h-4 flex justify-center items-center gap-2">
+        <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
+        <span id="ai2-money" class="text-white">${player.chips}</span>
+        <div id="ai2-status">
+          <span class="hidden rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>
+        </div>
+      </div>
+    <div id="ai2-cards" class="flex gap-2 align-center justify-center mt-3">
+    </div>
+    `;
   }
 }

@@ -7,13 +7,13 @@ export class Table {
   public resultLog: string[];
   public deck: Deck;
   public players: Player[];
-  
+
   constructor(public gameType: 'blackjack', public betDenomination: number[], name: string) {
     this.turnCounter = 0;
     this.gamePhase = 'betting';
     this.resultLog = [];
     this.deck = new Deck('blackjack');
-    this.players = [new Player(name, 'user', 'blackjack', 400), new Player('AI1', 'ai', 'blackjack', 400), new Player('AI2', 'ai', 'blackjack', 400), new Player('Dealer', 'house', 'blackjack')];
+    this.players = [new Player(name, 'user', 'blackjack', 400), new Player('AI1', 'ai1', 'blackjack', 400), new Player('AI2', 'ai2', 'blackjack', 400), new Player('Dealer', 'house', 'blackjack')];
   }
 
   // playerにカードを２枚づつ配る

@@ -17,6 +17,6 @@ export class Controller {
     if(name === "") name = "User"
 
     this.table = new Table("blackjack", [5, 10, 50, 100], name)
-    this.view.renderMainPage(name, this.table.betDenomination)
+    this.view.renderMainPage(this.table.betDenomination, this.table.players)
   }
 }
