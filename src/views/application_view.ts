@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
-    <title>Brack Jack</title>
-  </head>
-  <body>
-    <div id="root" class="bg-green-700 w-screen h-screen">
-      <section id="start-page" class="w-full h-full flex justify-center align-ce">
-        <!-- <div class="container m-auto text-center p-5">
+import { Controller } from "../controllers/application_controller";
+
+export class View{
+  private root: HTMLElement;
+  constructor(public controller: Controller){
+    this.root = document.getElementById("root") as HTMLElement
+  }
+  renderStartPage(){
+    this.root.innerHTML = `
+    <section id="start-page" class="w-full h-full flex justify-center align-ce">
+        <div class="container m-auto text-center p-5">
           <h1 class="mb-5 font-semibold text-3xl text-gray-100 tracking-tight">Welcome to Card Game!</h1>
           <input type="text" name="name" id="name-input" placeholder="username" class="shadow mb-5 w-72 border bg-gray-100 text-gray-700 border-gray-300 py-2 pl-3 rounded-md outline-none focus:outline-none focus:bg-white focus:border-gray-500" />
           <div class="relative w-72 m-auto mb-5">
@@ -26,8 +24,21 @@
             <button id="start-button" class="shadow py-3 w-72 text-xl text-white bg-green-500 hover:bg-green-400 rounded-xl">Start Game</button>
           </div>
         </div>
-      </section> -->
-      <!-- <section id="start-page" class="w-full h-full flex justify-center align-center">
+      </section>
+    `
+
+    const nameInput = document.getElementById("name-input") as HTMLInputElement
+    const gameTypeSelect = document.getElementById("game-type-select") as HTMLSelectElement
+    const startBtn = document.getElementById("start-button") as HTMLElement
+
+    startBtn.addEventListener("click", () => {
+      this.controller.startGame(nameInput.value, gameTypeSelect.value)
+    })
+  }
+
+  public renderMainPage(){
+    this.root.innerHTML = `
+    <section id="start-page" class="w-full h-full flex justify-center align-center">
         <div class="container m-auto text-center h-4/5">
           <div class="h-2/6 w-full flex justify-center">
             <div id="dealer-cards" class="bg-green-700 h-full w-1/3">
@@ -108,8 +119,7 @@
           <p class="text-white text-sm md:text-lg">Dealer has a card </p>
           <p class="text-white text-sm md:text-lg">Dealer has a card </p>
         </div>
-      </section> -->
-    </div>
-    <script src="./dist/index.js"></script>
-  </body>
-</html>
+      </section>
+    `
+  }
+}

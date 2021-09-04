@@ -1,4 +1,3 @@
-import { Deck } from "./models/Deck";
+import { Controller } from "./controllers/application_controller";
 
-new Deck("brackjack")
-new Deck("brackjack")
+new Controller()
