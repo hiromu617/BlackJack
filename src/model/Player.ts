@@ -1,4 +1,5 @@
 import { Card } from './Card';
+import {GameDecision} from "./GameDecision"
 
 type PlayerType = 'ai' | 'house' | 'user';
 
@@ -9,7 +10,11 @@ class Player {
     this.winAmount = 0;
   }
 
-  promptPlayer() {}
+  promptPlayer(userData?: number): GameDecision {
+    if(!userData) return new GameDecision("bet", userData)
+    // TODO
+    return new GameDecision("bet", userData)
+  }
 
   getHandScore(): number {
     let score = 0;
