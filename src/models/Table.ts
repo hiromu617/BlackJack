@@ -210,6 +210,7 @@ export class Table {
         console.log('error in actionAndReturnIsBust');
         return false;
       }
+      this.resultLog.push(`${player.name} lose ${Math.round(player.betAmount / 2)}`)
       player.chips += Math.round(player.betAmount / 2);
       player.betAmount = 0;
       return false;
