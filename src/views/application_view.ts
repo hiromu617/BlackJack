@@ -37,6 +37,8 @@ export class View {
   }
 
   public renderMainPage(betDenomination: number[], players: Player[]) {
+    const ai_names = players.filter(player => player.type === "ai").map(player => player.name)
+
     this.root.innerHTML = `
     <section class="w-full h-full flex justify-center align-center">
         <div class="container m-auto text-center h-4/5">
@@ -45,11 +47,11 @@ export class View {
             </div>
           </div>
           <div class="h-2/6 w-full flex justify-around">
-            <div id="ai1-container" class="h-full w-1/3">
+            <div id="${ai_names[0]}-container" class="h-full w-1/3">
             </div>
             <div id="bet-space" class="h-full w-1/3 flex justify-center items-center gap-0">
             </div>
-            <div id="ai2-container" class="h-full w-1/3">
+            <div id="${ai_names[1]}-container" class="h-full w-1/3">
             </div>
           </div>
           <div class="h-2/6 w-full flex justify-center">
@@ -68,8 +70,7 @@ export class View {
 
     players.forEach((player) => {
       if (player.type === 'house') this.renderHouse(player);
-      else if (player.type === 'ai1') this.renderAI1(player);
-      else if (player.type === 'ai2') this.renderAI2(player);
+      else if (player.type === 'ai') this.renderAI(player);
       else this.renderUser(player);
     });
 
@@ -232,9 +233,9 @@ export class View {
     `;
   }
 
-  public renderAI1(player: Player) {
-    if (player.type !== 'ai1') return;
-    const aiContainer = document.getElementById('ai1-container');
+  public renderAI(player: Player) {
+    if (player.type !== 'ai') return;
+    const aiContainer = document.getElementById( player.name + '-container');
     if (!aiContainer) {
       console.log('error in renderAi');
       return;
@@ -250,29 +251,6 @@ export class View {
         </div>
       </div>
     <div id="ai1-cards" class="flex gap-2 align-center justify-center mt-3">
-    </div>
-    `;
-  }
-
-  public renderAI2(player: Player) {
-    if (player.type !== 'ai2') return;
-    const aiContainer = document.getElementById('ai2-container');
-    if (!aiContainer) {
-      console.log('error in renderAi');
-      return;
-    }
-    aiContainer.innerHTML = `
-    <div class="mb-2">
-      <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">${player.name}</span>
-    </div>
-      <div class="h-4 flex justify-center items-center gap-2">
-        <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-        <span id="ai2-money" class="text-white">${player.chips}</span>
-        <div id="ai2-status">
-          <span class="hidden rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>
-        </div>
-      </div>
-    <div id="ai2-cards" class="flex gap-2 align-center justify-center mt-3">
     </div>
     `;
   }

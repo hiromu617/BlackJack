@@ -1,8 +1,7 @@
 import { Card } from './Card';
 import {GameDecision} from "./GameDecision"
 
-// hard coding , ai1 ai2 => aiにしたい
-type PlayerType = 'ai1'| 'ai2' | 'house' | 'user';
+type PlayerType = 'ai'| 'house' | 'user';
 export class Player {
   public winAmount: number;
   public gameDecision: GameDecision | null;
