@@ -79,7 +79,7 @@ export class Controller {
     this.haveTurn();
   }
 
-  private handleActingPhase() {
+  private async handleActingPhase() {
     if (!this.table || !this.dealer) {
       console.log('error in handleActionPhase');
       return;
@@ -105,10 +105,10 @@ export class Controller {
       const user = this.AIsAndUser.find((player) => player.type === 'user');
 
       if (!AIs || !user) return;
-      this.decideAIAction(AIs[0]);
-      this.decideAIAction(AIs[1]);
+      await this.decideAIAction(AIs[0]);
+      await this.decideAIAction(AIs[1]);
 
-      this.view.renderOperaion();
+      await this.view.renderOperaion();
 
       if (user.isBlackJack()) {
         this.view.updateOperation(user);
@@ -123,22 +123,22 @@ export class Controller {
     }
   }
 
-  private assignInitialHands(dealer: Player, playersWithoutDealer: Player[]) {
+  private async assignInitialHands(dealer: Player, playersWithoutDealer: Player[]) {
     if (!this.table) return;
 
     // playerにカードを配る
-     this.table.blackjackAssignPlayerHands();
-
-     this.table.players.forEach((player) => console.log(player.name, player.hand));
+    await this.table.blackjackAssignPlayerHands();
 
     // 配ったカードをレンダリング
     if (!dealer) return;
-    this.view.renderCards(dealer);
-     playersWithoutDealer.forEach((player) => {
+    await sleep(1000)
+    await this.view.renderCards(dealer);
+    await sleep(1000)
+    await playersWithoutDealer.forEach((player) => {
       this.view.renderCards(player);
     });
 
-     playersWithoutDealer.forEach((player) => {
+    await playersWithoutDealer.forEach((player) => {
       if (player.isBlackJack()) {
         this.view.updateStatus(player, 'blackjack');
       }
@@ -148,26 +148,11 @@ export class Controller {
     this.handleActingPhase();
   }
 
-  private decideDealerAction(Dealer: Player) {
-    //　初手が17以上ならstand
-    if (Dealer.getHandScore() > 16) {
-       this.handleAIAction('stand', Dealer);
-    }
 
-    // bustするまでloop
-    while (!this.handleAIAction('hit', Dealer)) {
-      const score = Dealer.getHandScore();
-      // 16以上になるまで引く
-      if (score > 16) {
-        this.handleAIAction('stand', Dealer);
-        break;
-      }
-    }
-  }
-
-  private decideAIAction(AI: Player) {
+  private async decideAIAction(AI: Player) {
     // TODO: AIのアクションの決定, double, surrender
     //　初手が16以上ならstand
+    await sleep(1000)
     if (AI.getHandScore() >= 16) {
       this.handleAIAction('stand', AI);
       return
@@ -176,10 +161,31 @@ export class Controller {
     // bustするまでloop
     while (!this.handleAIAction('hit', AI)) {
       const score = AI.getHandScore();
-      sleep(1000);
+      await sleep(1000);
       // 16以上になるまで引く
       if (score > 16) {
         this.handleAIAction('stand', AI);
+        break;
+      }
+    }
+  }
+
+  private async decideDealerAction(Dealer: Player) {
+    // TODO: AIのアクションの決定, double, surrender
+    //　初手が16以上ならstand
+    await sleep(1000)
+    if (Dealer.getHandScore() >= 16) {
+      this.handleAIAction('stand', Dealer);
+      return
+    }
+
+    // bustするまでloop
+    while (!this.handleAIAction('hit', Dealer)) {
+      const score = Dealer.getHandScore();
+      await sleep(1000);
+      // 16以上になるまで引く
+      if (score > 16) {
+        this.handleAIAction('stand', Dealer);
         break;
       }
     }
