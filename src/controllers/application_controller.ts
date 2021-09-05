@@ -1,11 +1,12 @@
 import { View } from '../views/application_view';
 import { Table } from '../models/Table';
-import { Player } from '../models/Player';
+import { Player, ActionType } from '../models/Player';
 import { sleep } from '../utils/sleep';
 // tableを操作してゲームを進める
 export class Controller {
   private view: View;
   private table: Table | null;
+  private user: Player | null = null;
   constructor() {
     this.view = new View(this);
     this.view.renderStartPage();
@@ -20,6 +21,9 @@ export class Controller {
     if (name === '') name = 'User';
 
     this.table = new Table('blackjack', [5, 10, 50, 100], name);
+
+    const user = this.table.players.find(player => player.type === "user")
+    if(user) this.user = user
 
     this.view.renderTableMock(this.table);
     this.haveTurn();
@@ -61,11 +65,15 @@ export class Controller {
       else if (player.type === 'user') this.table?.betUser(player, userBetMoney);
     });
 
-    this.table.gamePhase = 'acting';
+    this.table.proceedGamePhase()
     this.haveTurn();
   }
 
   private async handleActingPhase() {
+    if(!this.table) return
+    const dealer = this.table.players.find(player => player.type === "house")
+    const playersWithoutDealer = this.table.players.filter(player => player.type !== "house")
+    if(!dealer) return
     /* STEP1: カードを配る
         (Dealer => AI, User)
         ・2枚づつ, Dealerは一枚裏向き
@@ -79,9 +87,21 @@ export class Controller {
         ・裏向きのカードを公開する
         ・17以上になるまでカードを引く, bustチェック
      */
+
+    await this.assignInitialHands(dealer, playersWithoutDealer)
+
+    playersWithoutDealer.forEach(async player => {
+      await sleep(1000)
+      if(player.type === "ai"){
+        await this.table?.actionAI(player)
+      }else{
+        await this.view.renderOperaion()
+      }
+    })
+  }
+
+  private async assignInitialHands(dealer: Player, playersWithoutDealer: Player[]){
     if(!this.table) return
-    const dealer = this.table.players.find(player => player.type === "house")
-    const playersWithoutDealer = this.table.players.filter(player => player.type !== "house")
 
     // playerにカードを配る
     this.table.blackjackAssignPlayerHands()
@@ -96,6 +116,18 @@ export class Controller {
     playersWithoutDealer.forEach(player => {
       this.view.renderInitialCards(player)
     })
+  }
 
+  public handleAction(actionType: ActionType){
+    if(!this.user) return
+    if(actionType === "stand"){
+      this.view.updateStatus(this.user, "stand")
+    }else if(actionType === "hit"){
+      this.view.updateStatus(this.user, "hit")
+    }else if(actionType === "surrender"){
+      this.view.updateStatus(this.user, "surrender")
+    }else if(actionType === "double"){
+      this.view.updateStatus(this.user, "double")
+    }
   }
 }

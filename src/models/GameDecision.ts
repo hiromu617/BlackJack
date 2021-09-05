@@ -1,5 +1,5 @@
-export type ActionType = "bet" | "surrender" | "stand" | "hit"
+// export type ActionType = "surrender" | "stand" | "hit" | "double"
 
-export class GameDecision{
-  constructor(public action: ActionType, public amount?: number){}
-}
+// export class GameDecision{
+//   constructor(public action: ActionType, public amount?: number){}
+// }

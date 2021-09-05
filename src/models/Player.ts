@@ -1,31 +1,31 @@
 import { Card } from './Card';
-import {GameDecision} from "./GameDecision"
+export type ActionType = 'surrender' | 'stand' | 'hit' | 'double';
+export type Status = ActionType | 'bust' | null;
 
-type PlayerType = 'ai'| 'house' | 'user';
+type PlayerType = 'ai' | 'house' | 'user';
 export class Player {
   public betAmount: number;
-  public gameDecision: GameDecision | null;
-  public hand: Card[]
+  public status: Status;
+  public hand: Card[];
   constructor(public name: string, public type: PlayerType, public gameType: string, public chips?: number) {
     this.betAmount = 0;
-    this.gameDecision = null
-    this.hand = []
+    this.hand = [];
+    this.status = null;
   }
 
-  promptPlayer(userData?: number): GameDecision {
-    if(!userData) return new GameDecision("bet", userData)
+  promptPlayer() {
     // TODO
-    return this.gameDecision = new GameDecision("bet", userData)
+    // return this.gameDecision = new GameDecision("stand", userData)
   }
 
   getHandScore(): number {
     let score = 0;
     this.hand.forEach((card) => {
-      if(card.rank === "A" && score + 11 > 21){
-        score += 1
-        return
+      if (card.rank === 'A' && score + 11 > 21) {
+        score += 1;
+        return;
       }
-      score += card.getRankNumber()
+      score += card.getRankNumber();
     });
     return score;
   }

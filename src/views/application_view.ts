@@ -1,5 +1,5 @@
 import { Controller } from '../controllers/application_controller';
-import { Player } from '../models/Player';
+import { Player, Status } from '../models/Player';
 import { Table } from '../models/Table';
 export class View {
   private root: HTMLElement;
@@ -52,7 +52,7 @@ export class View {
     } else if (table.gamePhase === 'acting') {
       // TODO
       this.renderBet(players);
-      this.renderOperaion();
+      // this.renderOperaion();
     } else if (table.gamePhase === 'evaluatingWinner') {
       // TODO
     } else if (table.gamePhase === 'gameOver') {
@@ -94,7 +94,7 @@ export class View {
     `;
   }
 
-  private renderOperaion() {
+  public renderOperaion() {
     const operaionSpace = document.getElementById('operation-space');
     if (!operaionSpace) {
       console.log('error renderOperaion');
@@ -118,16 +118,16 @@ export class View {
     }
 
     surrenderBtn.addEventListener('click', () => {
-      // TODO
+      this.controller.handleAction("surrender")
     });
     standBtn.addEventListener('click', () => {
-      // TODO
+      this.controller.handleAction("stand")
     });
     hitBtn.addEventListener('click', () => {
-      // TODO
+      this.controller.handleAction("hit")
     });
     doubleBtn.addEventListener('click', () => {
-      // TODO
+      this.controller.handleAction("double")
     });
   }
 
@@ -216,7 +216,7 @@ export class View {
     <div class="mb-2">
       <span class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
     </div>
-    <div id="host-status" class="h-4 flex justify-center items-center gap-2">
+    <div id="${player.name}-status" class="h-4 flex justify-center items-center gap-2">
     </div>
     <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
     </div>
@@ -235,8 +235,8 @@ export class View {
     </div>
     <div class="h-4 flex justify-center items-center gap-2">
       <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-      <span id="user-money" class="text-white">${player.chips}</span>
-      <div id="user-status">
+      <span id="${player.name}-money" class="text-white">${player.chips}</span>
+      <div id="${player.name}-status">
       </div>
     </div>
     <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
@@ -257,8 +257,8 @@ export class View {
     </div>
       <div class="h-4 flex justify-center items-center gap-2">
         <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-        <span id="ai1-money" class="text-white">${player.chips}</span>
-        <div id="ai1-status">
+        <span id="${player.name}-money" class="text-white">${player.chips}</span>
+        <div id="${player.name}-status">
         </div>
       </div>
     <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
@@ -317,5 +317,30 @@ export class View {
       }
       cardConteiner.appendChild(cardDiv);
     });
+  }
+
+  public updateStatus(player: Player, status: Status){
+    const statusDiv = document.getElementById(player.name + "-status")
+    if(!statusDiv){
+      console.log("error in updateStatus")
+      return
+    }
+    if(status === "stand"){
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>`
+    }
+    else if(status === "hit"){
+      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>`
+    }
+    else if(status === "surrender"){
+      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">surrender</span>`
+    }
+    else if(status === "double"){
+      statusDiv.innerHTML = `<span id="ai2-status" class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`
+    }
+    else if(status === "bust"){
+      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`
+    }else if(status === null){
+      statusDiv.innerHTML = ``
+    }
   }
 }

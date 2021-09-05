@@ -39,16 +39,15 @@ export class Table {
 
   // プレイヤーのベット、ハンド、GameStatus、チップの状態などを更新する。
   evaluateMove(player: Player) {
-    const gameDecision = player.promptPlayer();
-    if (gameDecision.action === 'bet') {
+    if (player.status === 'double') {
       // TODO
-    } else if (gameDecision.action === 'hit') {
+    } else if (player.status === 'hit') {
       const card = this.deck.drawOne();
       if (!card) return;
       player.hand.push(card);
-    } else if (gameDecision.action === 'stand') {
+    } else if (player.status === 'stand') {
       return;
-    } else if (gameDecision.action === 'surrender') {
+    } else if (player.status === 'surrender') {
       // TODO
     }
   }
@@ -75,10 +74,17 @@ export class Table {
 
   // 全てのプレイヤーのアクションが終了したかどうか
   allPlayerActionsResolved(): boolean {
-    this.players.forEach((player) => {
-      if (!player.gameDecision) return false;
-    });
     return true;
+  }
+
+  // phaseを進める
+  proceedGamePhase(isGameOver?: boolean){
+    if(this.gamePhase === "betting") this.gamePhase = "acting"
+    else if(this.gamePhase === "acting") this.gamePhase = "evaluatingWinner"
+    else if(this.gamePhase === "evaluatingWinner"){
+      if(isGameOver) this.gamePhase = "gameOver"
+      else this.gamePhase = "betting"
+    }
   }
 
   betUser(user: Player, betMoney: number){
@@ -94,5 +100,9 @@ export class Table {
     const BET_MONEY = 100
     ai.betAmount = BET_MONEY
     ai.chips -= BET_MONEY
+  }
+
+  actionAI(player: Player){
+    alert(`${player.name} is actting`)
   }
 }
