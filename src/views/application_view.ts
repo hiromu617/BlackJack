@@ -329,13 +329,15 @@ export class View {
     if (status === 'stand') {
       statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>`;
     } else if (status === 'hit') {
-      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>`;
     } else if (status === 'surrender') {
-      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">surrender</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">surrender</span>`;
     } else if (status === 'double') {
-      statusDiv.innerHTML = `<span id="ai2-status" class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`;
     } else if (status === 'bust') {
-      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`;
+    } else if (status === "blackjack"){
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-gray-800 shadow-lg text-white text-sm uppercase">BJ</span>`;
     } else if (status === null) {
       statusDiv.innerHTML = ``;
     }
@@ -375,7 +377,7 @@ export class View {
     const hitBtn = document.getElementById("hit")
     const doubleBtn = document.getElementById("double")
 
-    if(player.status === "stand" || player.status === "double" || player.status === "surrender" || player.status === "bust"){
+    if(player.getHandScore() === 21 ||　player.status === "stand" || player.status === "double" || player.status === "surrender" || player.status === "bust" || player.status === "blackjack"){
       surrenderBtn?.setAttribute("disabled", "true")
       standBtn?.setAttribute("disabled", "true")
       hitBtn?.setAttribute("disabled", "true")

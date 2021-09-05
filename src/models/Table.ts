@@ -103,11 +103,7 @@ export class Table {
     ai.chips -= BET_MONEY;
   }
 
-  actionAI(player: Player) {
-    alert(`${player.name} is actting`);
-  }
-
-  // ActionののちBustかどうかを返す。まだ決定してない場合はnull
+  // ActionののちBustかどうかを返す。
   actionAndReturnIsBust(player: Player, type: ActionType): boolean {
     if (type === 'stand') {
       player.status = type;
@@ -121,32 +117,43 @@ export class Table {
       if (player.getHandScore() > 21) {
         player.status = 'bust';
         return true;
+      } else if (player.getHandScore() === 21) {
+        player.status = 'stand';
+        return false;
       } else {
         return false;
       }
     } else if (type === 'surrender') {
       player.status = type;
-      if(!player.chips){
-        console.log("error in actionAndReturnIsBust")
-        return false
+      if (!player.chips) {
+        console.log('error in actionAndReturnIsBust');
+        return false;
       }
       player.chips += Math.round(player.betAmount / 2);
-      player.betAmount = 0
+      player.betAmount = 0;
       return false;
-    } else{
+    } else {
       player.status = type;
 
       const newCard = this.deck.drawOne() as Card;
 
       player.hand.push(newCard);
-      player.betAmount *= 2
+      player.betAmount *= 2;
 
       if (player.getHandScore() > 21) {
         player.status = 'bust';
         return true;
+      } else if (player.getHandScore() === 21) {
+        player.status = 'stand';
+        return false;
       } else {
         return false;
       }
     }
+  }
+
+  // playerのハンドを表向きにする
+  public faceUpCards(player: Player) {
+    player.hand.forEach((card) => card.isDownCard && card.faceUp());
   }
 }

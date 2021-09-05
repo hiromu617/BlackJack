@@ -1,6 +1,6 @@
 import { Card } from './Card';
 export type ActionType = 'surrender' | 'stand' | 'hit' | 'double';
-export type Status = ActionType | 'bust' | null;
+export type Status = ActionType | 'bust' | "blackjack" | null;
 
 type PlayerType = 'ai' | 'house' | 'user';
 export class Player {
@@ -13,20 +13,22 @@ export class Player {
     this.status = null;
   }
 
-  promptPlayer() {
-    // TODO
-    // return this.gameDecision = new GameDecision("stand", userData)
+  isBlackJack(): boolean {
+    return this.getHandScore() === 21 && this.hand.length === 2;
   }
 
   getHandScore(): number {
     let score = 0;
     this.hand.forEach((card) => {
-      if (card.rank === 'A' && score + 11 > 21) {
-        score += 1;
-        return;
-      }
       score += card.getRankNumber();
     });
+    if(score > 21){
+      const numOfA = this.hand.filter(card => card.rank === "A").length
+      for(let i = 1; i <= numOfA; i++){
+        if(score < 21) return score
+        score -= 10
+      }
+    }
     return score;
   }
 }

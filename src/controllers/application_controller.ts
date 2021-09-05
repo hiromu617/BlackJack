@@ -79,7 +79,7 @@ export class Controller {
     this.haveTurn();
   }
 
-  private async handleActingPhase() {
+  private handleActingPhase() {
     if (!this.table || !this.dealer) {
       console.log('error in handleActionPhase');
       return;
@@ -101,57 +101,85 @@ export class Controller {
     if (this.actionPhase === 'assginCards') {
       this.assignInitialHands(this.dealer, this.AIsAndUser);
     } else if (this.actionPhase === 'userAndAIAction') {
-      const AIs = this.AIsAndUser.filter(player => player.type === "ai")
-      const user = this.AIsAndUser.find(player => player.type === "user")
+      const AIs = this.AIsAndUser.filter((player) => player.type === 'ai');
+      const user = this.AIsAndUser.find((player) => player.type === 'user');
 
-      if(!AIs || !user) return
-      await sleep(1000)
-      await this.decideAIAction(AIs[0])
-      await sleep(1000)
-      await this.decideAIAction(AIs[1])
-      this.view.renderOperaion()
+      if (!AIs || !user) return;
+      this.decideAIAction(AIs[0]);
+      this.decideAIAction(AIs[1]);
 
+      this.view.renderOperaion();
+
+      if (user.isBlackJack()) {
+        this.view.updateOperation(user);
+        this.actionPhase = 'dealerAction';
+        this.handleActingPhase();
+      }
     } else if (this.actionPhase === 'dealerAction') {
       // TODO
-      alert('dealer action');
+      this.table.faceUpCards(this.dealer);
+      this.view.renderCards(this.dealer);
+      this.decideDealerAction(this.dealer);
     }
   }
 
-  private async assignInitialHands(dealer: Player, playersWithoutDealer: Player[]) {
+  private assignInitialHands(dealer: Player, playersWithoutDealer: Player[]) {
     if (!this.table) return;
 
     // playerにカードを配る
-    this.table.blackjackAssignPlayerHands();
+     this.table.blackjackAssignPlayerHands();
 
-    this.table.players.forEach((player) => console.log(player.name, player.hand));
+     this.table.players.forEach((player) => console.log(player.name, player.hand));
 
     // 配ったカードをレンダリング
     if (!dealer) return;
-    await sleep(1000);
     this.view.renderCards(dealer);
-    await sleep(1000);
-    playersWithoutDealer.forEach((player) => {
+     playersWithoutDealer.forEach((player) => {
       this.view.renderCards(player);
+    });
+
+     playersWithoutDealer.forEach((player) => {
+      if (player.isBlackJack()) {
+        this.view.updateStatus(player, 'blackjack');
+      }
     });
 
     this.actionPhase = 'userAndAIAction';
     this.handleActingPhase();
   }
 
-  private async decideAIAction(AI: Player) {
-    // TODO: AIのアクションの決定, double, surrender
-    //　初手が16以上ならstand
-    if(AI.getHandScore() > 16){
-      this.handleAIAction('stand', AI)
+  private decideDealerAction(Dealer: Player) {
+    //　初手が17以上ならstand
+    if (Dealer.getHandScore() > 16) {
+       this.handleAIAction('stand', Dealer);
     }
 
     // bustするまでloop
-    while(!this.handleAIAction('hit', AI)){
-      const score = AI.getHandScore()
-      await sleep(1000);
+    while (!this.handleAIAction('hit', Dealer)) {
+      const score = Dealer.getHandScore();
       // 16以上になるまで引く
-      if(score > 16){
-        this.handleAIAction('stand', AI)
+      if (score > 16) {
+        this.handleAIAction('stand', Dealer);
+        break;
+      }
+    }
+  }
+
+  private decideAIAction(AI: Player) {
+    // TODO: AIのアクションの決定, double, surrender
+    //　初手が16以上ならstand
+    if (AI.getHandScore() >= 16) {
+      this.handleAIAction('stand', AI);
+      return
+    }
+
+    // bustするまでloop
+    while (!this.handleAIAction('hit', AI)) {
+      const score = AI.getHandScore();
+      sleep(1000);
+      // 16以上になるまで引く
+      if (score > 16) {
+        this.handleAIAction('stand', AI);
         break;
       }
     }
@@ -189,6 +217,12 @@ export class Controller {
         this.handleActingPhase();
       } else {
         this.view.updateOperation(player);
+        // scoreが21の時はstandして次のフェーズに
+        if (this.user.getHandScore() === 21) {
+          this.view.updateStatus(player, 'stand');
+          this.actionPhase = 'dealerAction';
+          this.handleActingPhase();
+        }
       }
     } else if (actionType === 'surrender') {
       this.table.actionAndReturnIsBust(player, actionType);
