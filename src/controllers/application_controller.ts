@@ -1,7 +1,7 @@
 import { View } from '../views/application_view';
 import { Table } from '../models/Table';
 import { Player } from '../models/Player';
-
+import { sleep } from '../utils/sleep';
 // tableを操作してゲームを進める
 export class Controller {
   private view: View;
@@ -65,7 +65,7 @@ export class Controller {
     this.haveTurn();
   }
 
-  private handleActingPhase() {
+  private async handleActingPhase() {
     /* STEP1: カードを配る
         (Dealer => AI, User)
         ・2枚づつ, Dealerは一枚裏向き
@@ -90,7 +90,9 @@ export class Controller {
 
     // 配ったカードをレンダリング
     if(!dealer) return
+    await sleep(1000)
     this.view.renderInitialCards(dealer)
+    await sleep(1000)
     playersWithoutDealer.forEach(player => {
       this.view.renderInitialCards(player)
     })

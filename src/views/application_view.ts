@@ -295,7 +295,7 @@ export class View {
       return
     }
 
-    player.hand.forEach((card) => {
+    player.hand.forEach(card => {
       const cardDiv = document.createElement('div');
 
       // TODO: 条件分技が汚い
