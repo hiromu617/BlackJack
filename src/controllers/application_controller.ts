@@ -101,14 +101,16 @@ export class Controller {
     if (this.actionPhase === 'assginCards') {
       this.assignInitialHands(this.dealer, this.AIsAndUser);
     } else if (this.actionPhase === 'userAndAIAction') {
-      this.AIsAndUser.forEach(async (player) => {
-        if (player.type === 'ai') {
-          await sleep(2000);
-          await this.decideAIAction(player);
-        } else {
-          await this.view.renderOperaion();
-        }
-      });
+      const AIs = this.AIsAndUser.filter(player => player.type === "ai")
+      const user = this.AIsAndUser.find(player => player.type === "user")
+
+      if(!AIs || !user) return
+      await sleep(1000)
+      await this.decideAIAction(AIs[0])
+      await sleep(1000)
+      await this.decideAIAction(AIs[1])
+      this.view.renderOperaion()
+
     } else if (this.actionPhase === 'dealerAction') {
       // TODO
       alert('dealer action');
@@ -136,10 +138,23 @@ export class Controller {
     this.handleActingPhase();
   }
 
-  private decideAIAction(AI: Player) {
-    // TODO: AIのアクションの決定, とりあえず全部スタンド
-    sleep(2000);
-    this.handleAIAction('stand', AI);
+  private async decideAIAction(AI: Player) {
+    // TODO: AIのアクションの決定, double, surrender
+    //　初手が16以上ならstand
+    if(AI.getHandScore() > 16){
+      this.handleAIAction('stand', AI)
+    }
+
+    // bustするまでloop
+    while(!this.handleAIAction('hit', AI)){
+      const score = AI.getHandScore()
+      await sleep(1000);
+      // 16以上になるまで引く
+      if(score > 16){
+        this.handleAIAction('stand', AI)
+        break;
+      }
+    }
   }
 
   // Userのアクションを行う
@@ -209,56 +224,47 @@ export class Controller {
       }
     }
   }
-  // AIのアクションを行う
-  public handleAIAction(actionType: ActionType, AI: Player) {
-    if (!this.table) return;
+  // AIのアクションを行う, bustしたかどうかを返す
+  public handleAIAction(actionType: ActionType, AI: Player): boolean {
+    if (!this.table) return false;
 
     if (actionType === 'stand') {
       this.table.actionAndReturnIsBust(AI, actionType);
 
-      // update view
       this.view.updateStatus(AI, actionType);
 
-      // 次に進む
+      return false;
     } else if (actionType === 'hit') {
       const isBust = this.table.actionAndReturnIsBust(AI, actionType);
 
-      // update view
       this.view.updateStatus(AI, actionType);
       this.view.renderCards(AI);
 
       if (isBust) {
-        // update view
         this.view.updateStatus(AI, 'bust');
-        // 次に進む
-      } else {
-        this.view.updateOperation(AI);
       }
+
+      return isBust;
     } else if (actionType === 'surrender') {
       this.table.actionAndReturnIsBust(AI, actionType);
-      this.view.updateStatus(AI, actionType);
 
-      // update view
+      this.view.updateStatus(AI, actionType);
       this.view.updateChips(AI);
       this.view.updateBet(AI);
-      // 次に進む
+
+      return false;
     } else {
       const isBust = this.table.actionAndReturnIsBust(AI, actionType);
-      this.view.updateStatus(AI, actionType);
 
-      // update view
+      this.view.updateStatus(AI, actionType);
       this.view.updateChips(AI);
       this.view.renderCards(AI);
       this.view.updateBet(AI);
-      this.view.updateOperation(AI);
-      if (isBust) {
-        // update view
-        this.view.updateStatus(AI, 'bust');
 
-        // 次に進む
-      } else {
-        // 次に進む
+      if (isBust) {
+        this.view.updateStatus(AI, 'bust');
       }
+      return isBust;
     }
   }
 }
