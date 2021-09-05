@@ -118,16 +118,16 @@ export class View {
     }
 
     surrenderBtn.addEventListener('click', () => {
-      this.controller.handleAction("surrender")
+      this.controller.handleAction('surrender');
     });
     standBtn.addEventListener('click', () => {
-      this.controller.handleAction("stand")
+      this.controller.handleAction('stand');
     });
     hitBtn.addEventListener('click', () => {
-      this.controller.handleAction("hit")
+      this.controller.handleAction('hit');
     });
     doubleBtn.addEventListener('click', () => {
-      this.controller.handleAction("double")
+      this.controller.handleAction('double');
     });
   }
 
@@ -289,22 +289,22 @@ export class View {
 
   public renderInitialCards(player: Player) {
     const cardConteiner = document.getElementById(player.name + '-cards-container');
-    if (!cardConteiner){
-      console.log("error renderInitialCards")
-      console.log(player.name)
-      return
+    if (!cardConteiner) {
+      console.log('error renderInitialCards');
+      console.log(player.name);
+      return;
     }
 
-    player.hand.forEach(card => {
+    player.hand.forEach((card) => {
       const cardDiv = document.createElement('div');
 
       // TODO: 条件分技が汚い
       if (card.isDownCard) {
-        cardDiv.classList.add("relative", "flex", "justify-center", "align-ceter", "w-20", "h-32", "bg-gray-900", "rounded", "shadow", "text-center");
+        cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-gray-900', 'rounded', 'shadow', 'text-center');
         cardDiv.innerHTML = `
         <p class="text-white text-3xl m-auto">?</p>
         `;
-      }else{
+      } else {
         if (player.type === 'house' || player.type === 'user') {
           cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-white', 'rounded', 'shadow', 'text-center');
         } else if (player.type === 'ai') {
@@ -319,28 +319,46 @@ export class View {
     });
   }
 
-  public updateStatus(player: Player, status: Status){
-    const statusDiv = document.getElementById(player.name + "-status")
-    if(!statusDiv){
-      console.log("error in updateStatus")
+  public updateStatus(player: Player, status: Status) {
+    const statusDiv = document.getElementById(player.name + '-status');
+    if (!statusDiv) {
+      console.log('error in updateStatus');
+      return;
+    }
+    if (status === 'stand') {
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>`;
+    } else if (status === 'hit') {
+      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>`;
+    } else if (status === 'surrender') {
+      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">surrender</span>`;
+    } else if (status === 'double') {
+      statusDiv.innerHTML = `<span id="ai2-status" class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`;
+    } else if (status === 'bust') {
+      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`;
+    } else if (status === null) {
+      statusDiv.innerHTML = ``;
+    }
+  }
+  // ユーザーのチップを更新
+  public updateChips(player: Player) {
+    const playerMoneySpan = document.getElementById(player.name + '-money');
+    if (!playerMoneySpan) return;
+    if (!player.chips) return;
+
+    playerMoneySpan.textContent = String(player.chips);
+  }
+
+  // playerのベットを更新
+  public updateBet(player: Player) {
+    const playerBet = document.getElementById(player.name + '-betmoney');
+    if (!playerBet) return;
+    if (!player.chips) return;
+
+    // ベットが０の時はDOMを削除
+    if (player.betAmount === 0) {
+      playerBet.classList.add("hidden")
       return
     }
-    if(status === "stand"){
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>`
-    }
-    else if(status === "hit"){
-      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>`
-    }
-    else if(status === "surrender"){
-      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">surrender</span>`
-    }
-    else if(status === "double"){
-      statusDiv.innerHTML = `<span id="ai2-status" class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`
-    }
-    else if(status === "bust"){
-      statusDiv.innerHTML = `<span id="ai1-status" class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`
-    }else if(status === null){
-      statusDiv.innerHTML = ``
-    }
+    playerBet.textContent = String(player.betAmount);
   }
 }

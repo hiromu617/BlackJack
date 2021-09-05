@@ -1,5 +1,6 @@
-import { Player } from './Player';
+import { ActionType, Player, Status } from './Player';
 import { Deck } from './Deck';
+import { Card } from './Card';
 
 export class Table {
   public turnCounter: number;
@@ -78,31 +79,74 @@ export class Table {
   }
 
   // phaseを進める
-  proceedGamePhase(isGameOver?: boolean){
-    if(this.gamePhase === "betting") this.gamePhase = "acting"
-    else if(this.gamePhase === "acting") this.gamePhase = "evaluatingWinner"
-    else if(this.gamePhase === "evaluatingWinner"){
-      if(isGameOver) this.gamePhase = "gameOver"
-      else this.gamePhase = "betting"
+  proceedGamePhase(isGameOver?: boolean) {
+    if (this.gamePhase === 'betting') this.gamePhase = 'acting';
+    else if (this.gamePhase === 'acting') this.gamePhase = 'evaluatingWinner';
+    else if (this.gamePhase === 'evaluatingWinner') {
+      if (isGameOver) this.gamePhase = 'gameOver';
+      else this.gamePhase = 'betting';
     }
   }
 
-  betUser(user: Player, betMoney: number){
-    if(!user.chips) return
+  betUser(user: Player, betMoney: number) {
+    if (!user.chips) return;
 
-    user.betAmount = betMoney
-    user.chips -= betMoney
+    user.betAmount = betMoney;
+    user.chips -= betMoney;
   }
 
-  betAI(ai: Player){
-    if(!ai.chips) return
+  betAI(ai: Player) {
+    if (!ai.chips) return;
     // TODO: AIのベット額の決め方
-    const BET_MONEY = 100
-    ai.betAmount = BET_MONEY
-    ai.chips -= BET_MONEY
+    const BET_MONEY = 100;
+    ai.betAmount = BET_MONEY;
+    ai.chips -= BET_MONEY;
   }
 
-  actionAI(player: Player){
-    alert(`${player.name} is actting`)
+  actionAI(player: Player) {
+    alert(`${player.name} is actting`);
+  }
+
+  // ActionののちBustかどうかを返す。まだ決定してない場合はnull
+  actionAndReturnIsBust(player: Player, type: ActionType): boolean {
+    if (type === 'stand') {
+      player.status = type;
+      return false;
+    } else if (type === 'hit') {
+      player.status = type;
+      const newCard = this.deck.drawOne() as Card;
+
+      player.hand.push(newCard);
+
+      if (player.getHandScore() > 21) {
+        player.status = 'bust';
+        return true;
+      } else {
+        return false;
+      }
+    } else if (type === 'surrender') {
+      player.status = type;
+      if(!player.chips){
+        console.log("error in actionAndReturnIsBust")
+        return false
+      }
+      player.chips += Math.round(player.betAmount / 2);
+      player.betAmount = 0
+      return false;
+    } else{
+      player.status = type;
+
+      const newCard = this.deck.drawOne() as Card;
+
+      player.hand.push(newCard);
+      player.betAmount *= 2
+
+      if (player.getHandScore() > 21) {
+        player.status = 'bust';
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 }

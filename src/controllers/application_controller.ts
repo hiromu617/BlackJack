@@ -22,8 +22,8 @@ export class Controller {
 
     this.table = new Table('blackjack', [5, 10, 50, 100], name);
 
-    const user = this.table.players.find(player => player.type === "user")
-    if(user) this.user = user
+    const user = this.table.players.find((player) => player.type === 'user');
+    if (user) this.user = user;
 
     this.view.renderTableMock(this.table);
     this.haveTurn();
@@ -65,15 +65,15 @@ export class Controller {
       else if (player.type === 'user') this.table?.betUser(player, userBetMoney);
     });
 
-    this.table.proceedGamePhase()
+    this.table.proceedGamePhase();
     this.haveTurn();
   }
 
   private async handleActingPhase() {
-    if(!this.table) return
-    const dealer = this.table.players.find(player => player.type === "house")
-    const playersWithoutDealer = this.table.players.filter(player => player.type !== "house")
-    if(!dealer) return
+    if (!this.table) return;
+    const dealer = this.table.players.find((player) => player.type === 'house');
+    const playersWithoutDealer = this.table.players.filter((player) => player.type !== 'house');
+    if (!dealer) return;
     /* STEP1: カードを配る
         (Dealer => AI, User)
         ・2枚づつ, Dealerは一枚裏向き
@@ -88,46 +88,70 @@ export class Controller {
         ・17以上になるまでカードを引く, bustチェック
      */
 
-    await this.assignInitialHands(dealer, playersWithoutDealer)
+    await this.assignInitialHands(dealer, playersWithoutDealer);
 
-    playersWithoutDealer.forEach(async player => {
-      await sleep(1000)
-      if(player.type === "ai"){
-        await this.table?.actionAI(player)
-      }else{
-        await this.view.renderOperaion()
+    playersWithoutDealer.forEach(async (player) => {
+      await sleep(1000);
+      if (player.type === 'ai') {
+        await this.table?.actionAI(player);
+      } else {
+        await this.view.renderOperaion();
       }
-    })
+    });
   }
 
-  private async assignInitialHands(dealer: Player, playersWithoutDealer: Player[]){
-    if(!this.table) return
+  private async assignInitialHands(dealer: Player, playersWithoutDealer: Player[]) {
+    if (!this.table) return;
 
     // playerにカードを配る
-    this.table.blackjackAssignPlayerHands()
+    this.table.blackjackAssignPlayerHands();
 
-    this.table.players.forEach(player => console.log(player.name, player.hand))
+    this.table.players.forEach((player) => console.log(player.name, player.hand));
 
     // 配ったカードをレンダリング
-    if(!dealer) return
-    await sleep(1000)
-    this.view.renderInitialCards(dealer)
-    await sleep(1000)
-    playersWithoutDealer.forEach(player => {
-      this.view.renderInitialCards(player)
-    })
+    if (!dealer) return;
+    await sleep(1000);
+    this.view.renderInitialCards(dealer);
+    await sleep(1000);
+    playersWithoutDealer.forEach((player) => {
+      this.view.renderInitialCards(player);
+    });
   }
 
-  public handleAction(actionType: ActionType){
-    if(!this.user) return
-    if(actionType === "stand"){
-      this.view.updateStatus(this.user, "stand")
-    }else if(actionType === "hit"){
-      this.view.updateStatus(this.user, "hit")
-    }else if(actionType === "surrender"){
-      this.view.updateStatus(this.user, "surrender")
-    }else if(actionType === "double"){
-      this.view.updateStatus(this.user, "double")
+  public handleAction(actionType: ActionType) {
+    if (!this.user) return;
+    if (!this.table) return;
+
+    if (actionType === 'stand') {
+      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      this.view.updateStatus(this.user, actionType);
+    } else if (actionType === 'hit') {
+      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      this.view.updateStatus(this.user, actionType);
+
+      // this.viewUpdateAddCard()
+      if(isBust){
+        this.view.updateStatus(this.user, "bust");
+      }else{
+
+      }
+    } else if (actionType === 'surrender') {
+      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      this.view.updateStatus(this.user, actionType);
+
+      this.view.updateChips(this.user)
+      this.view.updateBet(this.user)
+    } else {
+      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      this.view.updateStatus(this.user, actionType);
+
+      // this.viewUpdateAddCard()
+      this.view.updateChips(this.user)
+      if(isBust){
+        this.view.updateStatus(this.user, "bust");
+      }else{
+
+      }
     }
   }
 }
