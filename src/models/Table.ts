@@ -58,26 +58,6 @@ export class Table {
     return this.players[this.turnCounter];
   }
 
-  // 各ターンごとにテーブルの状態を更新する
-  haveTurn(userData?: number) {
-    if (this.gamePhase === 'betting') {
-      // TODO
-    } else if (this.gamePhase === 'acting') {
-      this.players.forEach((player) => {
-        player.promptPlayer();
-        this.evaluateMove(player);
-      });
-    } else if (this.gamePhase === 'evaluatingWinner') {
-      // TODO
-      this.players.forEach((player) => {
-        const score = player.getHandScore();
-      });
-    } else if (this.gamePhase === 'gameOver') {
-      // TODO
-    }
-    this.turnCounter++;
-  }
-
   // ラウンドが終了する前の各プレイヤーの状態を返す
   blackjackEvaluateAndGetRoundResults(): string {
     return '';

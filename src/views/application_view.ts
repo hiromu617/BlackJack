@@ -1,5 +1,6 @@
 import { Controller } from '../controllers/application_controller';
 import { Player } from '../models/Player';
+import { Table } from '../models/Table';
 export class View {
   private root: HTMLElement;
   constructor(public controller: Controller) {
@@ -36,8 +37,11 @@ export class View {
     });
   }
 
-  public renderMainPage(betDenomination: number[], players: Player[]) {
-    const ai_names = players.filter(player => player.type === "ai").map(player => player.name)
+  public renderTable(table: Table) {
+    const players = table.players;
+    const betDenomination = table.betDenomination;
+
+    const ai_names = players.filter((player) => player.type === 'ai').map((player) => player.name);
 
     this.root.innerHTML = `
     <section class="w-full h-full flex justify-center align-center">
@@ -74,9 +78,16 @@ export class View {
       else this.renderUser(player);
     });
 
-    this.renderOperaion();
-    // 400 start
-    this.renderBetOperationModal(400, betDenomination);
+    if(table.gamePhase === "betting"){
+      this.renderBetOperationModal(400, betDenomination);
+    }else if(table.gamePhase === "acting"){
+      // TODO
+      this.renderOperaion();
+    }else if(table.gamePhase === "evaluatingWinner"){
+      // TODO
+    }else if (table.gamePhase === "gameOver"){
+      // TODO
+    }
   }
 
   private renderOperaion() {
@@ -187,7 +198,9 @@ export class View {
       const betMoneyVal = betMoney.textContent;
       if (!betMoneyVal) return;
       const betMoneyNum = parseInt(betMoneyVal);
-      alert(`you bet ${betMoneyNum}`);
+      if(betMoneyNum === 0) return
+      
+      this.controller.handleUserBet(betMoneyNum)
       // close modal
       betOperationSpace.classList.add('hidden');
       // TODO
@@ -235,7 +248,7 @@ export class View {
 
   public renderAI(player: Player) {
     if (player.type !== 'ai') return;
-    const aiContainer = document.getElementById( player.name + '-container');
+    const aiContainer = document.getElementById(player.name + '-container');
     if (!aiContainer) {
       console.log('error in renderAi');
       return;
