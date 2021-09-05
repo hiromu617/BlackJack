@@ -111,10 +111,10 @@ export class Controller {
     // 配ったカードをレンダリング
     if (!dealer) return;
     await sleep(1000);
-    this.view.renderInitialCards(dealer);
+    this.view.renderCards(dealer);
     await sleep(1000);
     playersWithoutDealer.forEach((player) => {
-      this.view.renderInitialCards(player);
+      this.view.renderCards(player);
     });
   }
 
@@ -123,34 +123,43 @@ export class Controller {
     if (!this.table) return;
 
     if (actionType === 'stand') {
-      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      this.table.actionAndReturnIsBust(this.user, actionType);
       this.view.updateStatus(this.user, actionType);
+      this.view.updateOperation(this.user);
+      // 次に進む
     } else if (actionType === 'hit') {
       const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
       this.view.updateStatus(this.user, actionType);
 
-      // this.viewUpdateAddCard()
-      if(isBust){
-        this.view.updateStatus(this.user, "bust");
-      }else{
-
+      this.view.renderCards(this.user);
+      if (isBust) {
+        this.view.updateStatus(this.user, 'bust');
+        this.view.updateOperation(this.user);
+      } else {
+        // 次に進む
+        this.view.updateOperation(this.user);
       }
     } else if (actionType === 'surrender') {
-      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      this.table.actionAndReturnIsBust(this.user, actionType);
       this.view.updateStatus(this.user, actionType);
 
-      this.view.updateChips(this.user)
-      this.view.updateBet(this.user)
+      this.view.updateChips(this.user);
+      this.view.updateBet(this.user);
+      this.view.updateOperation(this.user);
+      // 次に進む
     } else {
       const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
       this.view.updateStatus(this.user, actionType);
 
-      // this.viewUpdateAddCard()
-      this.view.updateChips(this.user)
-      if(isBust){
-        this.view.updateStatus(this.user, "bust");
-      }else{
-
+      this.view.updateChips(this.user);
+      this.view.renderCards(this.user);
+      this.view.updateBet(this.user);
+      this.view.updateOperation(this.user);
+      if (isBust) {
+        this.view.updateStatus(this.user, 'bust');
+        // 次に進む
+      } else {
+        // 次に進む
       }
     }
   }

@@ -101,10 +101,10 @@ export class View {
       return;
     }
     operaionSpace.innerHTML = `
-    <button id="surrender" class="rounded-full h-24 w-24 flex items-center justify-center bg-red-500 hover:bg-red-600 shadow-lg text-white text-sm">SURRENDER</button>
-    <button id="stand" class="rounded-full h-24 w-24 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 shadow-lg text-white">STAND</button>
-    <button id="hit" class="rounded-full h-24 w-24 flex items-center justify-center bg-blue-500 hover:bg-blue-600 shadow-lg text-white">HIT</button>
-    <button id="double" class="rounded-full h-24 w-24 flex items-center justify-center bg-purple-500 hover:bg-purple-600 shadow-lg text-white">DOUBLE</button>
+    <button id="surrender" class="rounded-full h-24 w-24 flex items-center justify-center bg-red-500 hover:bg-red-600 disabled:opacity-50 shadow-lg text-white text-sm">SURRENDER</button>
+    <button id="stand" class="rounded-full h-24 w-24 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 shadow-lg text-white">STAND</button>
+    <button id="hit" class="rounded-full h-24 w-24 flex items-center justify-center bg-blue-500 hover:bg-blue-600 disabled:opacity-50 shadow-lg text-white">HIT</button>
+    <button id="double" class="rounded-full h-24 w-24 flex items-center justify-center bg-purple-500 hover:bg-purple-600 disabled:opacity-50 shadow-lg text-white">DOUBLE</button>
     `;
 
     const surrenderBtn = document.getElementById('surrender');
@@ -287,13 +287,14 @@ export class View {
     `;
   }
 
-  public renderInitialCards(player: Player) {
+  public renderCards(player: Player) {
     const cardConteiner = document.getElementById(player.name + '-cards-container');
     if (!cardConteiner) {
       console.log('error renderInitialCards');
       console.log(player.name);
       return;
     }
+    cardConteiner.innerHTML = '';
 
     player.hand.forEach((card) => {
       const cardDiv = document.createElement('div');
@@ -342,9 +343,14 @@ export class View {
   // ユーザーのチップを更新
   public updateChips(player: Player) {
     const playerMoneySpan = document.getElementById(player.name + '-money');
-    if (!playerMoneySpan) return;
-    if (!player.chips) return;
-
+    if (!playerMoneySpan){
+      console.log("error in updateChips notFound span")
+      return
+    };
+    if (!player.chips){
+      console.log("error in updateChips not found chips")
+      return
+    };
     playerMoneySpan.textContent = String(player.chips);
   }
 
@@ -356,9 +362,27 @@ export class View {
 
     // ベットが０の時はDOMを削除
     if (player.betAmount === 0) {
-      playerBet.classList.add("hidden")
-      return
+      playerBet.classList.add('hidden');
+      return;
     }
     playerBet.textContent = String(player.betAmount);
+  }
+
+  // operationを更新
+  public updateOperation(player: Player) {
+    const surrenderBtn = document.getElementById("surrender")
+    const standBtn = document.getElementById("stand")
+    const hitBtn = document.getElementById("hit")
+    const doubleBtn = document.getElementById("double")
+
+    if(player.status === "stand" || player.status === "double" || player.status === "surrender" || player.status === "bust"){
+      surrenderBtn?.setAttribute("disabled", "true")
+      standBtn?.setAttribute("disabled", "true")
+      hitBtn?.setAttribute("disabled", "true")
+      doubleBtn?.setAttribute("disabled", "true")
+    }else{
+      surrenderBtn?.setAttribute("disabled", "true")
+      doubleBtn?.setAttribute("disabled", "true")
+    }
   }
 }
