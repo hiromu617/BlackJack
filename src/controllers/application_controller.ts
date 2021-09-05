@@ -56,7 +56,8 @@ export class Controller {
     } else if (table.gamePhase === 'evaluatingWinner') {
       // TODO
       const logs = this.table.evaluateWinner()
-      // this.view.renderLogs(logs)
+      console.log(logs)
+      this.view.renderLogs(logs)
     } else if (table.gamePhase === 'gameOver') {
       // TODO
     }
@@ -181,11 +182,11 @@ export class Controller {
     // bustするまでloop
     while (!this.handleAiAndDealerAction('hit', Dealer)) {
       const score = Dealer.getHandScore();
-      await sleep(1000);
+      await sleep(2000);
       // 16以上になるまで引く
       if (score >= 17) {
         this.handleAiAndDealerAction('stand', Dealer);
-        await sleep(1000);
+        await sleep(2000);
         break;
       }
     }

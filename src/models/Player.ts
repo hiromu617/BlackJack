@@ -25,7 +25,7 @@ export class Player {
     if(score > 21){
       const numOfA = this.hand.filter(card => card.rank === "A").length
       for(let i = 1; i <= numOfA; i++){
-        if(score < 21) return score
+        if(score <= 21) return score
         score -= 10
       }
     }

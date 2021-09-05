@@ -88,7 +88,7 @@ export class View {
         </div>
         <div id="bet-operation-space" class="hidden z-20 fixed w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl">
         </div>
-        <div id="log" class="z-5 fixed pb-2 w-1/3 h-52 bottom-0 right-0 text-center">
+        <div id="log" class="overscroll-auto z-5 fixed pb-2 w-1/3 h-52 bottom-0 right-0 text-center">
         </div>
       </section>
     `;
@@ -322,6 +322,20 @@ export class View {
       }
       cardConteiner.appendChild(cardDiv);
     });
+  }
+
+  public renderLogs(logs: string[]){
+    const logContainer = document.getElementById("log")
+    if(!logContainer){
+      console.log("error in renderLogs")
+      return
+    }
+
+    logs.forEach(log => {
+      logContainer.innerHTML += `
+      <p class="text-white text-sm md:text-lg">${log}</p>
+      `
+    })
   }
 
   public updateStatus(player: Player, status: Status) {
