@@ -19,7 +19,8 @@ export class Controller {
     if (name === '') name = 'User';
 
     this.table = new Table('blackjack', [5, 10, 50, 100], name);
-    // this.view.renderTable(this.table);
+    
+    this.view.renderTableMock(this.table);
     this.haveTurn()
   }
 

@@ -41,6 +41,27 @@ export class View {
     const players = table.players;
     const betDenomination = table.betDenomination;
 
+    players.forEach((player) => {
+      if (player.type === 'house') this.renderHouse(player);
+      else if (player.type === 'ai') this.renderAI(player);
+      else this.renderUser(player);
+    });
+
+    if(table.gamePhase === "betting"){
+      this.renderBetOperationModal(400, betDenomination);
+    }else if(table.gamePhase === "acting"){
+      // TODO
+      this.renderBet(players);
+      this.renderOperaion();
+    }else if(table.gamePhase === "evaluatingWinner"){
+      // TODO
+    }else if (table.gamePhase === "gameOver"){
+      // TODO
+    }
+  }
+
+  public renderTableMock(table: Table){
+    const players = table.players;
     const ai_names = players.filter((player) => player.type === 'ai').map((player) => player.name);
 
     this.root.innerHTML = `
@@ -71,24 +92,6 @@ export class View {
         </div>
       </section>
     `;
-
-    players.forEach((player) => {
-      if (player.type === 'house') this.renderHouse(player);
-      else if (player.type === 'ai') this.renderAI(player);
-      else this.renderUser(player);
-    });
-
-    if(table.gamePhase === "betting"){
-      this.renderBetOperationModal(400, betDenomination);
-    }else if(table.gamePhase === "acting"){
-      // TODO
-      alert("acting")
-      this.renderOperaion();
-    }else if(table.gamePhase === "evaluatingWinner"){
-      // TODO
-    }else if (table.gamePhase === "gameOver"){
-      // TODO
-    }
   }
 
   private renderOperaion() {
@@ -187,13 +190,6 @@ export class View {
     });
 
     resetBtn.addEventListener('click', () => {
-      const betMoneyVal = betMoney.textContent;
-      const currentChipVal = currentChip.textContent;
-
-      if (!betMoneyVal || !currentChipVal) return;
-      const betMoneyNum = parseInt(betMoneyVal);
-      const currentChipNum = parseInt(currentChipVal);
-
       betMoney.textContent = '0';
       currentChip.textContent = String(chip);
     });
@@ -268,5 +264,26 @@ export class View {
     <div id="ai1-cards" class="flex gap-2 align-center justify-center mt-3">
     </div>
     `;
+  }
+
+  private renderBet(players: Player[]){
+    const betSpace = document.getElementById('bet-space');
+    if (!betSpace) {
+      console.log('error in renderBet');
+      return;
+    }
+    const user = players.find(player => player.type === "user")
+    const AIs = players.filter(player => player.type === "ai")
+
+    if(!user){
+      console.log('error in renderBet');
+      return
+    }
+
+    betSpace.innerHTML = `
+    <div id="${AIs[0].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[0].betAmount}</div>
+    <div id="${user.name}-betmoney" class="mt-24 rounded-full h-12 w-12 flex items-center justify-center bg-white shadow-lg text-gray-800 text-sm">${user.betAmount}</div>
+    <div id="${AIs[1].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[1].betAmount}</div>
+    `
   }
 }
