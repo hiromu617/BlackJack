@@ -28,6 +28,7 @@ export class Table {
         }
         player.hand.push(card1, card2);
       }
+      if (player.isBlackJack()) player.status = 'blackjack';
     });
   }
 
@@ -51,6 +52,86 @@ export class Table {
     } else if (player.status === 'surrender') {
       // TODO
     }
+  }
+  /*
+  - delaerがBJ
+    - playerがBJ
+      += betAmount
+    - playerがBJでない
+      chipsそのまま(betAmountだけ減る)
+  - dealerがbust || playerの勝ち
+    - playerがBJ
+      += 2.5 * betAmount
+    - playerがBJでない
+      += 2 * betAmount
+  - dealerがbustしてない && dealerの勝ち
+    - playerがdouble
+    - playerがstand
+      chipそのまま
+  */
+  evaluateWinner(): string[] {
+    const dealer = this.players.find((player) => player.type === 'house');
+    const AIsAndUser = this.players.filter((player) => player.type !== 'house');
+    if (!dealer) return ['error'];
+
+    const dealerScore = dealer.getHandScore();
+    const isDealerBust = dealer.status === 'bust';
+    const isDealerBJ = dealer.status === 'blackjack';
+
+    AIsAndUser.forEach((player) => {
+      if (player.status === 'surrender') {
+        return;
+      }
+      if (!player.chips) return;
+      const playerScore = player.getHandScore();
+      const isPlayerBust = player.status === 'bust';
+      const isPlayerBJ = player.status === 'blackjack';
+
+      if (isDealerBJ) {
+        if (isPlayerBJ) {
+          // dealer, playerともにBJ => 変化なし(betAmountが戻る)
+          this.resultLog.push(`${player.name} push`);
+          player.chips += player.betAmount;
+          return;
+        } else {
+          // dealerがBJ, playerがBJでない　=>　betAmount分減る(chipsそのまま)
+          this.resultLog.push(`${player.name} lose ${player.betAmount}`);
+          player.betAmount = 0;
+          return;
+        }
+      } else if (isDealerBust || (!isPlayerBust && dealerScore < playerScore)) {
+        if (isPlayerBJ) {
+          //  1.5 * betAmount勝ち (+= 2.5*betAmount)
+          this.resultLog.push(`${player.name} win ${player.betAmount * 1.5}`);
+          player.chips += 2.5 * player.betAmount;
+          player.betAmount = 0;
+          return;
+        } else {
+          //  1.5 * betAmount勝ち (+= 2.5*betAmount)
+          this.resultLog.push(`${player.name} win ${player.betAmount}`);
+          player.chips += 2 * player.betAmount;
+          player.betAmount = 0;
+          return;
+        }
+      } else if (!isDealerBust && (isPlayerBust || dealerScore > playerScore)) {
+        this.resultLog.push(`${player.name} lose ${player.betAmount}`);
+        player.betAmount = 0;
+        return;
+      } else {
+        // push
+        this.resultLog.push(`${player.name} push`);
+        if (player.status === 'double') {
+          player.chips += Math.round(player.betAmount / 2);
+          player.betAmount = 0;
+          return;
+        }
+        player.chips += player.betAmount;
+        player.betAmount = 0;
+        return;
+      }
+    });
+
+    return this.resultLog;
   }
 
   // 現在のターンのプレイヤーを返す

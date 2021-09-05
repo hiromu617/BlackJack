@@ -55,7 +55,8 @@ export class Controller {
       this.handleActingPhase();
     } else if (table.gamePhase === 'evaluatingWinner') {
       // TODO
-      alert("evaluate")
+      const logs = this.table.evaluateWinner()
+      // this.view.renderLogs(logs)
     } else if (table.gamePhase === 'gameOver') {
       // TODO
     }
@@ -99,26 +100,26 @@ export class Controller {
     if (this.actionPhase === 'assginCards') {
       this.assignInitialHands(this.dealer, this.AIsAndUser);
     } else if (this.actionPhase === 'userAndAIAction') {
-        const AIs = this.AIsAndUser.filter((player) => player.type === 'ai');
-        const user = this.AIsAndUser.find((player) => player.type === 'user');
+      const AIs = this.AIsAndUser.filter((player) => player.type === 'ai');
+      const user = this.AIsAndUser.find((player) => player.type === 'user');
 
-        if (!AIs || !user) return;
-        await this.decideAIAction(AIs[0]);
-        await this.decideAIAction(AIs[1]);
+      if (!AIs || !user) return;
+      await this.decideAIAction(AIs[0]);
+      await this.decideAIAction(AIs[1]);
 
-        await this.view.renderOperaion();
+      await this.view.renderOperaion();
 
-        if (user.isBlackJack()) {
-          await this.view.updateOperation(user);
-          this.actionPhase = 'dealerAction';
-          this.handleActingPhase();
-        }
+      if (user.isBlackJack()) {
+        await this.view.updateOperation(user);
+        this.actionPhase = 'dealerAction';
+        this.handleActingPhase();
+      }
     } else if (this.actionPhase === 'dealerAction') {
       await this.table.faceUpCards(this.dealer);
       await this.view.renderCards(this.dealer);
       await this.decideDealerAction(this.dealer);
-      await this.table.proceedGamePhase()
-      this.haveTurn()
+      await this.table.proceedGamePhase();
+      this.haveTurn();
     }
   }
 
