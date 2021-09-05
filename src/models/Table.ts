@@ -80,4 +80,19 @@ export class Table {
     });
     return true;
   }
+
+  betUser(user: Player, betMoney: number){
+    if(!user.chips) return
+
+    user.betAmount = betMoney
+    user.chips -= betMoney
+  }
+
+  betAI(ai: Player){
+    if(!ai.chips) return
+    // TODO: AIのベット額の決め方
+    const BET_MONEY = 100
+    ai.betAmount = BET_MONEY
+    ai.chips -= BET_MONEY
+  }
 }

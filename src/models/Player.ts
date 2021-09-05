@@ -3,11 +3,11 @@ import {GameDecision} from "./GameDecision"
 
 type PlayerType = 'ai'| 'house' | 'user';
 export class Player {
-  public winAmount: number;
+  public betAmount: number;
   public gameDecision: GameDecision | null;
   public hand: Card[]
   constructor(public name: string, public type: PlayerType, public gameType: string, public chips?: number) {
-    this.winAmount = 0;
+    this.betAmount = 0;
     this.gameDecision = null
     this.hand = []
   }

@@ -32,11 +32,11 @@ export class Controller {
       this.view.renderTable(table);
 
     } else if (table.gamePhase === 'acting') {
-      table.players.forEach((player) => {
-        player.promptPlayer();
-        table.evaluateMove(player);
-      });
-
+      // table.players.forEach((player) => {
+      //   player.promptPlayer();
+      //   table.evaluateMove(player);
+      // });
+      this.view.renderTable(table)
     } else if (table.gamePhase === 'evaluatingWinner') {
       // TODO
       table.players.forEach((player) => {
@@ -49,7 +49,16 @@ export class Controller {
     table.turnCounter++;
   }
 
-  public handleUserBet(betMoney: number){
-    alert(betMoney)
+  public handleBetPhase(userBetMoney: number){
+    if(!this.table) return
+
+    this.table.players.forEach(player => {
+      if(player.type === "house") return
+      else if(player.type === "ai") this.table?.betAI(player)
+      else if(player.type === "user") this.table?.betUser(player, userBetMoney)
+    })
+
+    this.table.gamePhase = "acting"
+    this.haveTurn()
   }
 }

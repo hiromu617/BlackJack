@@ -65,7 +65,7 @@ export class View {
         </div>
         <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-5 align-center">
         </div>
-        <div id="bet-operation-space" class="z-20 fixed w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl">
+        <div id="bet-operation-space" class="hidden z-20 fixed w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl">
         </div>
         <div id="log" class="z-5 fixed pb-2 w-1/3 h-52 bottom-0 right-0 text-center">
         </div>
@@ -82,6 +82,7 @@ export class View {
       this.renderBetOperationModal(400, betDenomination);
     }else if(table.gamePhase === "acting"){
       // TODO
+      alert("acting")
       this.renderOperaion();
     }else if(table.gamePhase === "evaluatingWinner"){
       // TODO
@@ -152,6 +153,8 @@ export class View {
             <button id=${ID.BET_DECISION_BTN} class="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">Bet</button>
           </div>
     `;
+    // modalを表示
+    betOperationSpace.classList.remove("hidden")
 
     const currentChip = document.getElementById(ID.CURRENT_CHIP);
     const betMoney = document.getElementById(ID.BET_MONEY);
@@ -199,11 +202,10 @@ export class View {
       if (!betMoneyVal) return;
       const betMoneyNum = parseInt(betMoneyVal);
       if(betMoneyNum === 0) return
-      
-      this.controller.handleUserBet(betMoneyNum)
+
       // close modal
       betOperationSpace.classList.add('hidden');
-      // TODO
+      this.controller.handleBetPhase(betMoneyNum)
     });
   }
 
