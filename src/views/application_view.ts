@@ -47,20 +47,20 @@ export class View {
       else this.renderUser(player);
     });
 
-    if(table.gamePhase === "betting"){
+    if (table.gamePhase === 'betting') {
       this.renderBetOperationModal(400, betDenomination);
-    }else if(table.gamePhase === "acting"){
+    } else if (table.gamePhase === 'acting') {
       // TODO
       this.renderBet(players);
       this.renderOperaion();
-    }else if(table.gamePhase === "evaluatingWinner"){
+    } else if (table.gamePhase === 'evaluatingWinner') {
       // TODO
-    }else if (table.gamePhase === "gameOver"){
+    } else if (table.gamePhase === 'gameOver') {
       // TODO
     }
   }
 
-  public renderTableMock(table: Table){
+  public renderTableMock(table: Table) {
     const players = table.players;
     const ai_names = players.filter((player) => player.type === 'ai').map((player) => player.name);
 
@@ -157,7 +157,7 @@ export class View {
           </div>
     `;
     // modalを表示
-    betOperationSpace.classList.remove("hidden")
+    betOperationSpace.classList.remove('hidden');
 
     const currentChip = document.getElementById(ID.CURRENT_CHIP);
     const betMoney = document.getElementById(ID.BET_MONEY);
@@ -197,11 +197,11 @@ export class View {
       const betMoneyVal = betMoney.textContent;
       if (!betMoneyVal) return;
       const betMoneyNum = parseInt(betMoneyVal);
-      if(betMoneyNum === 0) return
+      if (betMoneyNum === 0) return;
 
       // close modal
       betOperationSpace.classList.add('hidden');
-      this.controller.handleBetPhase(betMoneyNum)
+      this.controller.handleBetPhase(betMoneyNum);
     });
   }
 
@@ -218,7 +218,7 @@ export class View {
     </div>
     <div id="host-status" class="h-4 flex justify-center items-center gap-2">
     </div>
-    <div class="flex gap-2 align-center justify-center mt-3">
+    <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
     </div>
     `;
   }
@@ -239,7 +239,7 @@ export class View {
       <div id="user-status">
       </div>
     </div>
-    <div id="user-cards" class="flex gap-2 align-center justify-center mt-3">
+    <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
     </div>
     `;
   }
@@ -261,29 +261,61 @@ export class View {
         <div id="ai1-status">
         </div>
       </div>
-    <div id="ai1-cards" class="flex gap-2 align-center justify-center mt-3">
+    <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
     </div>
     `;
   }
 
-  private renderBet(players: Player[]){
+  private renderBet(players: Player[]) {
     const betSpace = document.getElementById('bet-space');
     if (!betSpace) {
       console.log('error in renderBet');
       return;
     }
-    const user = players.find(player => player.type === "user")
-    const AIs = players.filter(player => player.type === "ai")
+    const user = players.find((player) => player.type === 'user');
+    const AIs = players.filter((player) => player.type === 'ai');
 
-    if(!user){
+    if (!user) {
       console.log('error in renderBet');
-      return
+      return;
     }
 
     betSpace.innerHTML = `
     <div id="${AIs[0].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[0].betAmount}</div>
     <div id="${user.name}-betmoney" class="mt-24 rounded-full h-12 w-12 flex items-center justify-center bg-white shadow-lg text-gray-800 text-sm">${user.betAmount}</div>
     <div id="${AIs[1].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[1].betAmount}</div>
-    `
+    `;
+  }
+
+  public renderInitialCards(player: Player) {
+    const cardConteiner = document.getElementById(player.name + '-cards-container');
+    if (!cardConteiner){
+      console.log("error renderInitialCards")
+      console.log(player.name)
+      return
+    }
+
+    player.hand.forEach((card) => {
+      const cardDiv = document.createElement('div');
+
+      // TODO: 条件分技が汚い
+      if (card.isDownCard) {
+        cardDiv.classList.add("relative", "flex", "justify-center", "align-ceter", "w-20", "h-32", "bg-gray-900", "rounded", "shadow", "text-center");
+        cardDiv.innerHTML = `
+        <p class="text-white text-3xl m-auto">?</p>
+        `;
+      }else{
+        if (player.type === 'house' || player.type === 'user') {
+          cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-white', 'rounded', 'shadow', 'text-center');
+        } else if (player.type === 'ai') {
+          cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-16', 'h-24', 'bg-white', 'rounded', 'shadow', 'text-center');
+        }
+        cardDiv.innerHTML = `
+        <img src="/img/${card.suit}.png" class="h-10 m-auto" />
+        <span class="absolute top-0 left-1 text-2xl mt-2">${card.rank}</span>
+        `;
+      }
+      cardConteiner.appendChild(cardDiv);
+    });
   }
 }
