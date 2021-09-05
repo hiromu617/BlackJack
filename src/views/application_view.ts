@@ -68,19 +68,19 @@ export class View {
     <section class="w-full h-full flex justify-center align-center">
         <div class="container m-auto text-center h-4/5">
           <div class="h-2/6 w-full flex justify-center">
-            <div id="house-container" class="h-full w-1/3">
+            <div id="house-container" class="h-full min:w-1/3">
             </div>
           </div>
           <div class="h-2/6 w-full flex justify-around">
-            <div id="${ai_names[0]}-container" class="h-full w-1/3">
+            <div id="${ai_names[0]}-container" class="h-full min:w-1/3">
             </div>
             <div id="bet-space" class="h-full w-1/3 flex justify-center items-center gap-0">
             </div>
-            <div id="${ai_names[1]}-container" class="h-full w-1/3">
+            <div id="${ai_names[1]}-container" class="h-full min:w-1/3">
             </div>
           </div>
           <div class="h-2/6 w-full flex justify-center">
-            <div id="user-container" class="bg-green-700 h-full w-2/5">
+            <div id="user-container" class="bg-green-700 h-full min:w-2/5">
             </div>
           </div>
         </div>
@@ -308,13 +308,17 @@ export class View {
       } else {
         if (player.type === 'house' || player.type === 'user') {
           cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-white', 'rounded', 'shadow', 'text-center');
+          cardDiv.innerHTML = `
+          <img src="/img/${card.suit}.png" class="h-10 m-auto" />
+          <span class="absolute top-0 left-1 text-2xl mt-2">${card.rank}</span>
+          `;
         } else if (player.type === 'ai') {
           cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-16', 'h-24', 'bg-white', 'rounded', 'shadow', 'text-center');
+          cardDiv.innerHTML = `
+          <img src="/img/${card.suit}.png" class="h-8 m-auto" />
+          <span class="absolute top-0 left-1 text-xl mt-2">${card.rank}</span>
+          `;
         }
-        cardDiv.innerHTML = `
-        <img src="/img/${card.suit}.png" class="h-10 m-auto" />
-        <span class="absolute top-0 left-1 text-2xl mt-2">${card.rank}</span>
-        `;
       }
       cardConteiner.appendChild(cardDiv);
     });
@@ -336,7 +340,7 @@ export class View {
       statusDiv.innerHTML = `<span class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`;
     } else if (status === 'bust') {
       statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`;
-    } else if (status === "blackjack"){
+    } else if (status === 'blackjack') {
       statusDiv.innerHTML = `<span class="rounded-full px-2 bg-gray-800 shadow-lg text-white text-sm uppercase">BJ</span>`;
     } else if (status === null) {
       statusDiv.innerHTML = ``;
@@ -345,14 +349,14 @@ export class View {
   // ユーザーのチップを更新
   public updateChips(player: Player) {
     const playerMoneySpan = document.getElementById(player.name + '-money');
-    if (!playerMoneySpan){
-      console.log("error in updateChips notFound span")
-      return
-    };
-    if (!player.chips){
-      console.log("error in updateChips not found chips")
-      return
-    };
+    if (!playerMoneySpan) {
+      console.log('error in updateChips notFound span');
+      return;
+    }
+    if (!player.chips) {
+      console.log('error in updateChips not found chips');
+      return;
+    }
     playerMoneySpan.textContent = String(player.chips);
   }
 
@@ -372,19 +376,19 @@ export class View {
 
   // operationを更新
   public updateOperation(player: Player) {
-    const surrenderBtn = document.getElementById("surrender")
-    const standBtn = document.getElementById("stand")
-    const hitBtn = document.getElementById("hit")
-    const doubleBtn = document.getElementById("double")
+    const surrenderBtn = document.getElementById('surrender');
+    const standBtn = document.getElementById('stand');
+    const hitBtn = document.getElementById('hit');
+    const doubleBtn = document.getElementById('double');
 
-    if(player.getHandScore() === 21 ||　player.status === "stand" || player.status === "double" || player.status === "surrender" || player.status === "bust" || player.status === "blackjack"){
-      surrenderBtn?.setAttribute("disabled", "true")
-      standBtn?.setAttribute("disabled", "true")
-      hitBtn?.setAttribute("disabled", "true")
-      doubleBtn?.setAttribute("disabled", "true")
-    }else{
-      surrenderBtn?.setAttribute("disabled", "true")
-      doubleBtn?.setAttribute("disabled", "true")
+    if (player.getHandScore() === 21 || player.status === 'stand' || player.status === 'double' || player.status === 'surrender' || player.status === 'bust' || player.status === 'blackjack') {
+      surrenderBtn?.setAttribute('disabled', 'true');
+      standBtn?.setAttribute('disabled', 'true');
+      hitBtn?.setAttribute('disabled', 'true');
+      doubleBtn?.setAttribute('disabled', 'true');
+    } else {
+      surrenderBtn?.setAttribute('disabled', 'true');
+      doubleBtn?.setAttribute('disabled', 'true');
     }
   }
 }

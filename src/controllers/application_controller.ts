@@ -55,9 +55,7 @@ export class Controller {
       this.handleActingPhase();
     } else if (table.gamePhase === 'evaluatingWinner') {
       // TODO
-      table.players.forEach((player) => {
-        const score = player.getHandScore();
-      });
+      alert("evaluate")
     } else if (table.gamePhase === 'gameOver') {
       // TODO
     }
@@ -101,25 +99,26 @@ export class Controller {
     if (this.actionPhase === 'assginCards') {
       this.assignInitialHands(this.dealer, this.AIsAndUser);
     } else if (this.actionPhase === 'userAndAIAction') {
-      const AIs = this.AIsAndUser.filter((player) => player.type === 'ai');
-      const user = this.AIsAndUser.find((player) => player.type === 'user');
+        const AIs = this.AIsAndUser.filter((player) => player.type === 'ai');
+        const user = this.AIsAndUser.find((player) => player.type === 'user');
 
-      if (!AIs || !user) return;
-      await this.decideAIAction(AIs[0]);
-      await this.decideAIAction(AIs[1]);
+        if (!AIs || !user) return;
+        await this.decideAIAction(AIs[0]);
+        await this.decideAIAction(AIs[1]);
 
-      await this.view.renderOperaion();
+        await this.view.renderOperaion();
 
-      if (user.isBlackJack()) {
-        this.view.updateOperation(user);
-        this.actionPhase = 'dealerAction';
-        this.handleActingPhase();
-      }
+        if (user.isBlackJack()) {
+          await this.view.updateOperation(user);
+          this.actionPhase = 'dealerAction';
+          this.handleActingPhase();
+        }
     } else if (this.actionPhase === 'dealerAction') {
-      // TODO
-      this.table.faceUpCards(this.dealer);
-      this.view.renderCards(this.dealer);
-      this.decideDealerAction(this.dealer);
+      await this.table.faceUpCards(this.dealer);
+      await this.view.renderCards(this.dealer);
+      await this.decideDealerAction(this.dealer);
+      await this.table.proceedGamePhase()
+      this.haveTurn()
     }
   }
 
@@ -131,9 +130,9 @@ export class Controller {
 
     // 配ったカードをレンダリング
     if (!dealer) return;
-    await sleep(1000)
+    await sleep(1000);
     await this.view.renderCards(dealer);
-    await sleep(1000)
+    await sleep(1000);
     await playersWithoutDealer.forEach((player) => {
       this.view.renderCards(player);
     });
@@ -148,14 +147,13 @@ export class Controller {
     this.handleActingPhase();
   }
 
-
   private async decideAIAction(AI: Player) {
     // TODO: AIのアクションの決定, double, surrender
     //　初手が16以上ならstand
-    await sleep(1000)
+    await sleep(1000);
     if (AI.getHandScore() >= 16) {
       this.handleAiAndDealerAction('stand', AI);
-      return
+      return;
     }
 
     // bustするまでloop
@@ -165,6 +163,7 @@ export class Controller {
       // 16以上になるまで引く
       if (score > 16) {
         this.handleAiAndDealerAction('stand', AI);
+        await sleep(1000);
         break;
       }
     }
@@ -172,10 +171,10 @@ export class Controller {
 
   private async decideDealerAction(Dealer: Player) {
     // Dealerは17以上までhit
-    await sleep(1000)
+    await sleep(1000);
     if (Dealer.getHandScore() >= 17) {
       this.handleAiAndDealerAction('stand', Dealer);
-      return
+      return;
     }
 
     // bustするまでloop
@@ -185,6 +184,7 @@ export class Controller {
       // 16以上になるまで引く
       if (score >= 17) {
         this.handleAiAndDealerAction('stand', Dealer);
+        await sleep(1000);
         break;
       }
     }
@@ -263,7 +263,7 @@ export class Controller {
       }
     }
   }
-  // AIのアクションを行う, bustしたかどうかを返す
+  // AIとDealerのアクションを行う, bustしたかどうかを返す
   public handleAiAndDealerAction(actionType: ActionType, AI: Player): boolean {
     if (!this.table) return false;
 
