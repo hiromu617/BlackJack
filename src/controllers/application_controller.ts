@@ -154,38 +154,37 @@ export class Controller {
     //　初手が16以上ならstand
     await sleep(1000)
     if (AI.getHandScore() >= 16) {
-      this.handleAIAction('stand', AI);
+      this.handleAiAndDealerAction('stand', AI);
       return
     }
 
     // bustするまでloop
-    while (!this.handleAIAction('hit', AI)) {
+    while (!this.handleAiAndDealerAction('hit', AI)) {
       const score = AI.getHandScore();
       await sleep(1000);
       // 16以上になるまで引く
       if (score > 16) {
-        this.handleAIAction('stand', AI);
+        this.handleAiAndDealerAction('stand', AI);
         break;
       }
     }
   }
 
   private async decideDealerAction(Dealer: Player) {
-    // TODO: AIのアクションの決定, double, surrender
-    //　初手が16以上ならstand
+    // Dealerは17以上までhit
     await sleep(1000)
-    if (Dealer.getHandScore() >= 16) {
-      this.handleAIAction('stand', Dealer);
+    if (Dealer.getHandScore() >= 17) {
+      this.handleAiAndDealerAction('stand', Dealer);
       return
     }
 
     // bustするまでloop
-    while (!this.handleAIAction('hit', Dealer)) {
+    while (!this.handleAiAndDealerAction('hit', Dealer)) {
       const score = Dealer.getHandScore();
       await sleep(1000);
       // 16以上になるまで引く
-      if (score > 16) {
-        this.handleAIAction('stand', Dealer);
+      if (score >= 17) {
+        this.handleAiAndDealerAction('stand', Dealer);
         break;
       }
     }
@@ -265,7 +264,7 @@ export class Controller {
     }
   }
   // AIのアクションを行う, bustしたかどうかを返す
-  public handleAIAction(actionType: ActionType, AI: Player): boolean {
+  public handleAiAndDealerAction(actionType: ActionType, AI: Player): boolean {
     if (!this.table) return false;
 
     if (actionType === 'stand') {
