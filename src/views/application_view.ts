@@ -118,16 +118,16 @@ export class View {
     }
 
     surrenderBtn.addEventListener('click', () => {
-      this.controller.handleAction('surrender');
+      this.controller.handleUserAction('surrender');
     });
     standBtn.addEventListener('click', () => {
-      this.controller.handleAction('stand');
+      this.controller.handleUserAction('stand');
     });
     hitBtn.addEventListener('click', () => {
-      this.controller.handleAction('hit');
+      this.controller.handleUserAction('hit');
     });
     doubleBtn.addEventListener('click', () => {
-      this.controller.handleAction('double');
+      this.controller.handleUserAction('double');
     });
   }
 
