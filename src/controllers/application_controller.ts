@@ -102,9 +102,9 @@ export class Controller {
       this.assignInitialHands(this.dealer, this.AIsAndUser);
     } else if (this.actionPhase === 'userAndAIAction') {
       this.AIsAndUser.forEach(async (player) => {
-        await sleep(1000);
         if (player.type === 'ai') {
-          await this.table?.actionAI(player);
+          await sleep(2000);
+          await this.decideAIAction(player);
         } else {
           await this.view.renderOperaion();
         }
@@ -136,61 +136,68 @@ export class Controller {
     this.handleActingPhase();
   }
 
-  // userのアクションを行う
+  private decideAIAction(AI: Player) {
+    // TODO: AIのアクションの決定, とりあえず全部スタンド
+    sleep(2000);
+    this.handleAIAction('stand', AI);
+  }
+
+  // Userのアクションを行う
   public handleUserAction(actionType: ActionType) {
     if (!this.user) return;
     if (!this.table) return;
+    const player = this.user;
 
     if (actionType === 'stand') {
-      this.table.actionAndReturnIsBust(this.user, actionType);
+      this.table.actionAndReturnIsBust(player, actionType);
 
       // update view
-      this.view.updateStatus(this.user, actionType);
-      this.view.updateOperation(this.user);
+      this.view.updateStatus(player, actionType);
 
       // 次に進む
+      this.view.updateOperation(player);
       this.actionPhase = 'dealerAction';
       this.handleActingPhase();
     } else if (actionType === 'hit') {
-      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
+      const isBust = this.table.actionAndReturnIsBust(player, actionType);
 
       // update view
-      this.view.updateStatus(this.user, actionType);
-      this.view.renderCards(this.user);
+      this.view.updateStatus(player, actionType);
+      this.view.renderCards(player);
 
       if (isBust) {
         // update view
-        this.view.updateStatus(this.user, 'bust');
-        this.view.updateOperation(this.user);
+        this.view.updateStatus(player, 'bust');
         // 次に進む
+        this.view.updateOperation(player);
         this.actionPhase = 'dealerAction';
         this.handleActingPhase();
       } else {
-        this.view.updateOperation(this.user);
+        this.view.updateOperation(player);
       }
     } else if (actionType === 'surrender') {
-      this.table.actionAndReturnIsBust(this.user, actionType);
-      this.view.updateStatus(this.user, actionType);
+      this.table.actionAndReturnIsBust(player, actionType);
+      this.view.updateStatus(player, actionType);
 
       // update view
-      this.view.updateChips(this.user);
-      this.view.updateBet(this.user);
-      this.view.updateOperation(this.user);
+      this.view.updateChips(player);
+      this.view.updateBet(player);
       // 次に進む
+      this.view.updateOperation(player);
       this.actionPhase = 'dealerAction';
       this.handleActingPhase();
     } else {
-      const isBust = this.table.actionAndReturnIsBust(this.user, actionType);
-      this.view.updateStatus(this.user, actionType);
+      const isBust = this.table.actionAndReturnIsBust(player, actionType);
+      this.view.updateStatus(player, actionType);
 
       // update view
-      this.view.updateChips(this.user);
-      this.view.renderCards(this.user);
-      this.view.updateBet(this.user);
-      this.view.updateOperation(this.user);
+      this.view.updateChips(player);
+      this.view.renderCards(player);
+      this.view.updateBet(player);
+      this.view.updateOperation(player);
       if (isBust) {
         // update view
-        this.view.updateStatus(this.user, 'bust');
+        this.view.updateStatus(player, 'bust');
 
         // 次に進む
         this.actionPhase = 'dealerAction';
@@ -199,6 +206,58 @@ export class Controller {
         // 次に進む
         this.actionPhase = 'dealerAction';
         this.handleActingPhase();
+      }
+    }
+  }
+  // AIのアクションを行う
+  public handleAIAction(actionType: ActionType, AI: Player) {
+    if (!this.table) return;
+
+    if (actionType === 'stand') {
+      this.table.actionAndReturnIsBust(AI, actionType);
+
+      // update view
+      this.view.updateStatus(AI, actionType);
+
+      // 次に進む
+    } else if (actionType === 'hit') {
+      const isBust = this.table.actionAndReturnIsBust(AI, actionType);
+
+      // update view
+      this.view.updateStatus(AI, actionType);
+      this.view.renderCards(AI);
+
+      if (isBust) {
+        // update view
+        this.view.updateStatus(AI, 'bust');
+        // 次に進む
+      } else {
+        this.view.updateOperation(AI);
+      }
+    } else if (actionType === 'surrender') {
+      this.table.actionAndReturnIsBust(AI, actionType);
+      this.view.updateStatus(AI, actionType);
+
+      // update view
+      this.view.updateChips(AI);
+      this.view.updateBet(AI);
+      // 次に進む
+    } else {
+      const isBust = this.table.actionAndReturnIsBust(AI, actionType);
+      this.view.updateStatus(AI, actionType);
+
+      // update view
+      this.view.updateChips(AI);
+      this.view.renderCards(AI);
+      this.view.updateBet(AI);
+      this.view.updateOperation(AI);
+      if (isBust) {
+        // update view
+        this.view.updateStatus(AI, 'bust');
+
+        // 次に進む
+      } else {
+        // 次に進む
       }
     }
   }
