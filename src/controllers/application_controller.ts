@@ -54,16 +54,20 @@ export class Controller {
       this.view.renderTable(table);
       this.handleActingPhase();
     } else if (table.gamePhase === 'evaluatingWinner') {
-      const logs = this.table.evaluateWinner()
-      this.view.renderLogs(logs)
-      this.table.resetTable()
-      this.table.proceedGamePhase()
-      this.actionPhase = "assginCards"
-      this.haveTurn()
+      const { userResult, resultLog } = this.table.evaluateWinner();
+      this.view.renderLogs(resultLog);
+      this.view.renderUserResultModal(userResult);
+      this.table.resetTable();
+      this.table.proceedGamePhase();
+      this.actionPhase = 'assginCards';
     } else if (table.gamePhase === 'gameOver') {
       // TODO
     }
     table.turnCounter++;
+  }
+
+  public nextGame() {
+    this.haveTurn();
   }
 
   // userがbetを決定すると呼ばれる
@@ -120,8 +124,8 @@ export class Controller {
     } else if (this.actionPhase === 'dealerAction') {
       await this.table.faceUpCards(this.dealer);
       await this.view.renderCards(this.dealer);
+      await sleep(1000);
       await this.decideDealerAction(this.dealer);
-      await sleep(2000)
       await this.table.proceedGamePhase();
       this.haveTurn();
     }
@@ -154,7 +158,7 @@ export class Controller {
 
   private async decideAIAction(AI: Player) {
     // TODO: AIのアクションの決定, double, surrender
-    //　初手が16以上ならstand
+    // 初手が16以上ならstand
     await sleep(1000);
     if (AI.getHandScore() >= 16) {
       this.handleAiAndDealerAction('stand', AI);

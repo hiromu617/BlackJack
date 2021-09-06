@@ -6,6 +6,7 @@ export class Table {
   public turnCounter: number;
   public gamePhase: 'betting' | 'acting' | 'evaluatingWinner' | 'gameOver';
   public resultLog: string[];
+  public userResult: string;
   public deck: Deck;
   public players: Player[];
 
@@ -13,6 +14,7 @@ export class Table {
     this.turnCounter = 0;
     this.gamePhase = 'betting';
     this.resultLog = [];
+    this.userResult = '';
     this.deck = new Deck('blackjack');
     this.players = [new Player(name, 'user', 'blackjack', 400), new Player('AI1', 'ai', 'blackjack', 400), new Player('AI2', 'ai', 'blackjack', 400), new Player('Dealer', 'house', 'blackjack')];
   }
@@ -70,10 +72,10 @@ export class Table {
     - playerがstand
       chipそのまま
   */
-  evaluateWinner(): string[] {
+  evaluateWinner(): {userResult: string , resultLog: string[]} {
     const dealer = this.players.find((player) => player.type === 'house');
     const AIsAndUser = this.players.filter((player) => player.type !== 'house');
-    if (!dealer) return ['error'];
+    if (!dealer) return {userResult: "error", resultLog:["error"]};
 
     const dealerScore = dealer.getHandScore();
     const isDealerBust = dealer.status === 'bust';
@@ -91,11 +93,13 @@ export class Table {
       if (isDealerBJ) {
         if (isPlayerBJ) {
           // dealer, playerともにBJ => 変化なし(betAmountが戻る)
+          if(player.type === "user") this.userResult = `${player.name} push`
           this.resultLog.push(`${player.name} push`);
           player.chips += player.betAmount;
           return;
         } else {
-          // dealerがBJ, playerがBJでない　=>　betAmount分減る(chipsそのまま)
+          // dealerがBJ, playerがBJでない => betAmount分減る(chipsそのまま)
+          if(player.type === "user") this.userResult = `${player.name} lose ${player.betAmount}`
           this.resultLog.push(`${player.name} lose ${player.betAmount}`);
           player.betAmount = 0;
           return;
@@ -103,23 +107,27 @@ export class Table {
       } else if (isDealerBust || (!isPlayerBust && dealerScore < playerScore)) {
         if (isPlayerBJ) {
           //  1.5 * betAmount勝ち (+= 2.5*betAmount)
+          if(player.type === "user") this.userResult = `${player.name} win ${player.betAmount * 1.5}`
           this.resultLog.push(`${player.name} win ${player.betAmount * 1.5}`);
           player.chips += 2.5 * player.betAmount;
           player.betAmount = 0;
           return;
         } else {
           //  1.5 * betAmount勝ち (+= 2.5*betAmount)
+          if(player.type === "user") this.userResult = `${player.name} win ${player.betAmount}`
           this.resultLog.push(`${player.name} win ${player.betAmount}`);
           player.chips += 2 * player.betAmount;
           player.betAmount = 0;
           return;
         }
       } else if (!isDealerBust && (isPlayerBust || dealerScore > playerScore)) {
+        if(player.type === "user") this.userResult = `${player.name} lose ${player.betAmount}`
         this.resultLog.push(`${player.name} lose ${player.betAmount}`);
         player.betAmount = 0;
         return;
       } else {
         // push
+        if(player.type === "user") this.userResult = `${player.name} push ${player.betAmount}`
         this.resultLog.push(`${player.name} push`);
         if (player.status === 'double') {
           player.chips += Math.round(player.betAmount / 2);
@@ -132,7 +140,7 @@ export class Table {
       }
     });
 
-    return this.resultLog;
+    return  { userResult: this.userResult, resultLog: this.resultLog};
   }
 
   // // 現在のターンのプレイヤーを返す
@@ -211,6 +219,7 @@ export class Table {
         console.log('error in actionAndReturnIsBust');
         return false;
       }
+      if(player.type === "user") this.userResult = `${player.name} lose ${Math.round(player.betAmount / 2)}`
       this.resultLog.push(`${player.name} lose ${Math.round(player.betAmount / 2)}`);
       player.chips += Math.round(player.betAmount / 2);
       player.betAmount = 0;
@@ -244,6 +253,6 @@ export class Table {
   public resetTable() {
     this.blackjackClearPlayerHandsAndStatus();
     this.deck.resetDeck();
-    this.resultLog = ["-----------"];
+    this.resultLog = ['-----------'];
   }
 }

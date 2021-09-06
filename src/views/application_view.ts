@@ -70,9 +70,9 @@ export class View {
         <div class="h-2/6 w-full flex justify-center">
           <div id="house-container" class="h-full min:w-1/3"></div>
         </div>
-        <div class="h-2/6 w-full flex justify-around">
+        <div class="h-2/6 w-full flex relative justify-around">
           <div id="${ai_names[0]}-container" class="h-full min:w-1/3"></div>
-          <div id="bet-space" class="h-full w-1/3 flex justify-center items-center gap-0"></div>
+          <div id="bet-space" class="h-full absolute w-36 flex justify-center items-center gap-0"></div>
           <div id="${ai_names[1]}-container" class="h-full min:w-1/3"></div>
         </div>
         <div class="h-2/6 w-full flex justify-center">
@@ -81,6 +81,7 @@ export class View {
       </div>
       <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-5 align-center"></div>
       <div id="bet-operation-space" class="hidden z-20 fixed w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
+      <div id="user-result-space" class="hidden z-20 fixed transform -translate-y-1/2 w-1/3 h-1/3 top-1/2 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
       <div id="log" class="overflow-scroll z-5 fixed pb-2 w-1/3 h-52 top-0 right-0 text-center"></div>
     </section>
     `;
@@ -195,6 +196,32 @@ export class View {
       betOperationSpace.classList.add('hidden');
       this.controller.handleBetPhase(betMoneyNum);
     });
+  }
+
+  public renderUserResultModal(userLog: string) {
+    const userResultSpace = document.getElementById('user-result-space');
+    if (!userResultSpace) {
+      console.log('error renderUserResultModal');
+      return;
+    }
+    const NEXT_GAME_BTN = "next_game-btn"
+
+    userResultSpace.innerHTML = `
+          <div>
+            <p class="text-2xl text-gray-800 font-bold">${userLog}</p>
+          </div>
+          <button id=${NEXT_GAME_BTN} class="bg-blue-500 border px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-blue-600">Next Game</button>
+    `;
+    // modalを表示
+    userResultSpace.classList.remove('hidden');
+
+    const nextGameBtn = document.getElementById(NEXT_GAME_BTN)
+    if(!nextGameBtn) return
+
+    nextGameBtn.addEventListener("click", () => {
+      userResultSpace.classList.add('hidden');
+      this.controller.nextGame()
+    })
   }
 
   public renderHouse(player: Player) {
