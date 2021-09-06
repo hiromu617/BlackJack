@@ -33,6 +33,16 @@ export class View {
     const startBtn = document.getElementById('start-button') as HTMLElement;
 
     startBtn.addEventListener('click', () => {
+      if(nameInput.value.length > 10){
+        alert("10文字以内で入力して下さい")
+        nameInput.value = ""
+        return
+      }
+      if(nameInput.value === "AI1" || nameInput.value === "AI2"){
+        alert("その名前は使うことができません")
+        nameInput.value = ""
+        return
+      }
       this.controller.startGame(nameInput.value, gameTypeSelect.value);
     });
   }
