@@ -22,6 +22,7 @@ export class Table {
   // playerにカードを２枚づつ配る
   blackjackAssignPlayerHands() {
     this.players.forEach((player) => {
+      if (player.isGameOver) return;
       const card1 = this.deck.drawOne();
       const card2 = this.deck.drawOne();
       if (card1 && card2) {
@@ -35,27 +36,14 @@ export class Table {
   }
 
   // プレイヤーのハンドとステータスをリセットする
-  blackjackClearPlayerHandsAndStatus() {
+  blackjackClearPlayerHandsAndStatusAndBetAmount() {
     this.players.forEach((player) => {
       player.hand = [];
+      player.betAmount = 0
       player.status = null;
     });
   }
 
-  // プレイヤーのベット、ハンド、GameStatus、チップの状態などを更新する。
-  evaluateMove(player: Player) {
-    if (player.status === 'double') {
-      // TODO
-    } else if (player.status === 'hit') {
-      const card = this.deck.drawOne();
-      if (!card) return;
-      player.hand.push(card);
-    } else if (player.status === 'stand') {
-      return;
-    } else if (player.status === 'surrender') {
-      // TODO
-    }
-  }
   /*
   - delaerがBJ
     - playerがBJ
@@ -72,10 +60,10 @@ export class Table {
     - playerがstand
       chipそのまま
   */
-  evaluateWinner(): {userResult: string , resultLog: string[]} {
+  evaluateWinner(): { userResult: string; resultLog: string[] } {
     const dealer = this.players.find((player) => player.type === 'house');
     const AIsAndUser = this.players.filter((player) => player.type !== 'house');
-    if (!dealer) return {userResult: "error", resultLog:["error"]};
+    if (!dealer) return { userResult: 'error', resultLog: ['error'] };
 
     const dealerScore = dealer.getHandScore();
     const isDealerBust = dealer.status === 'bust';
@@ -85,7 +73,7 @@ export class Table {
       if (player.status === 'surrender') {
         return;
       }
-      if (!player.chips) return;
+      if (player.chips === undefined || player.chips === null) return;
       const playerScore = player.getHandScore();
       const isPlayerBust = player.status === 'bust';
       const isPlayerBJ = player.status === 'blackjack';
@@ -93,80 +81,52 @@ export class Table {
       if (isDealerBJ) {
         if (isPlayerBJ) {
           // dealer, playerともにBJ => 変化なし(betAmountが戻る)
-          if(player.type === "user") this.userResult = `${player.name} push`
+          if (player.type === 'user') this.userResult = `${player.name} push`;
           this.resultLog.push(`${player.name} push`);
           player.chips += player.betAmount;
-          return;
         } else {
           // dealerがBJ, playerがBJでない => betAmount分減る(chipsそのまま)
-          if(player.type === "user") this.userResult = `${player.name} lose ${player.betAmount}`
+          if (player.type === 'user') this.userResult = `${player.name} lose ${player.betAmount}`;
           this.resultLog.push(`${player.name} lose ${player.betAmount}`);
           player.betAmount = 0;
-          return;
         }
       } else if (isDealerBust || (!isPlayerBust && dealerScore < playerScore)) {
         if (isPlayerBJ) {
           //  1.5 * betAmount勝ち (+= 2.5*betAmount)
-          if(player.type === "user") this.userResult = `${player.name} win ${player.betAmount * 1.5}`
+          if (player.type === 'user') this.userResult = `${player.name} win ${player.betAmount * 1.5}`;
           this.resultLog.push(`${player.name} win ${player.betAmount * 1.5}`);
           player.chips += 2.5 * player.betAmount;
           player.betAmount = 0;
-          return;
+          return
         } else {
           //  1.5 * betAmount勝ち (+= 2.5*betAmount)
-          if(player.type === "user") this.userResult = `${player.name} win ${player.betAmount}`
+          if (player.type === 'user') this.userResult = `${player.name} win ${player.betAmount}`;
           this.resultLog.push(`${player.name} win ${player.betAmount}`);
           player.chips += 2 * player.betAmount;
           player.betAmount = 0;
-          return;
+          return
         }
       } else if (!isDealerBust && (isPlayerBust || dealerScore > playerScore)) {
-        if(player.type === "user") this.userResult = `${player.name} lose ${player.betAmount}`
+        if (player.type === 'user') this.userResult = `${player.name} lose ${player.betAmount}`;
         this.resultLog.push(`${player.name} lose ${player.betAmount}`);
         player.betAmount = 0;
-        return;
+        return
       } else {
         // push
-        if(player.type === "user") this.userResult = `${player.name} push`
+        if (player.type === 'user') this.userResult = `${player.name} push`;
         this.resultLog.push(`${player.name} push`);
         if (player.status === 'double') {
           player.chips += Math.round(player.betAmount / 2);
           player.betAmount = 0;
-          return;
         }
         player.chips += player.betAmount;
         player.betAmount = 0;
-        return;
+        return
       }
     });
 
-    return  { userResult: this.userResult, resultLog: this.resultLog};
+    return { userResult: this.userResult, resultLog: this.resultLog };
   }
-
-  // // 現在のターンのプレイヤーを返す
-  // getTurnPlayer(): Player {
-  //   return this.players[this.turnCounter];
-  // }
-
-  // // ラウンドが終了する前の各プレイヤーの状態を返す
-  // blackjackEvaluateAndGetRoundResults(): string {
-  //   return '';
-  // }
-
-  // // 最後のプレイヤーかどうか
-  // onLastPlayer(): boolean {
-  //   return this.turnCounter === this.players.length - 1;
-  // }
-
-  // // 最初のプレイヤーかどうか
-  // onFirstPlayer(): boolean {
-  //   return this.turnCounter === 0;
-  // }
-
-  // // 全てのプレイヤーのアクションが終了したかどうか
-  // allPlayerActionsResolved(): boolean {
-  //   return true;
-  // }
 
   // phaseを進める
   proceedGamePhase(isGameOver?: boolean) {
@@ -186,7 +146,9 @@ export class Table {
   }
 
   betAI(ai: Player) {
+    // console.log(ai)
     if (!ai.chips) return;
+    if (ai.chips <= 0) return;
     // TODO: AIのベット額の決め方
     const BET_MONEY = 100;
     ai.betAmount = BET_MONEY;
@@ -219,7 +181,7 @@ export class Table {
         console.log('error in actionAndReturnIsBust');
         return false;
       }
-      if(player.type === "user") this.userResult = `${player.name} lose ${Math.round(player.betAmount / 2)}`
+      if (player.type === 'user') this.userResult = `${player.name} lose ${Math.round(player.betAmount / 2)}`;
       this.resultLog.push(`${player.name} lose ${Math.round(player.betAmount / 2)}`);
       player.chips += Math.round(player.betAmount / 2);
       player.betAmount = 0;
@@ -251,8 +213,15 @@ export class Table {
 
   // テーブルをリセット
   public resetTable() {
-    this.blackjackClearPlayerHandsAndStatus();
+    this.blackjackClearPlayerHandsAndStatusAndBetAmount();
     this.deck.resetDeck();
     this.resultLog = ['-----------'];
+  }
+
+  public checkIsGameOver(){
+    this.players.forEach(player => {
+      if(player.chips === null || player.chips === undefined) return
+      if(player.chips <= 0) player.isGameOver = true
+    })
   }
 }

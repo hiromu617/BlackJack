@@ -58,6 +58,7 @@ export class Controller {
       this.view.renderLogs(resultLog);
       this.view.renderUserResultModal(userResult);
       this.table.resetTable();
+      this.table.checkIsGameOver();
       this.table.proceedGamePhase();
       this.actionPhase = 'assginCards';
     } else if (table.gamePhase === 'gameOver') {
@@ -111,9 +112,13 @@ export class Controller {
       const user = this.AIsAndUser.find((player) => player.type === 'user');
 
       if (!AIs || !user) return;
-      await this.decideAIAction(AIs[0]);
-      await this.decideAIAction(AIs[1]);
-
+      if (!AIs[0].isGameOver) {
+        await this.decideAIAction(AIs[0]);
+      }
+      if (!AIs[1].isGameOver) {
+        await this.decideAIAction(AIs[1]);
+      }
+      await sleep(1000)
       await this.view.renderOperaion();
 
       if (user.isBlackJack()) {
@@ -122,16 +127,18 @@ export class Controller {
         this.handleActingPhase();
       }
     } else if (this.actionPhase === 'dealerAction') {
+      await sleep(1000);
       await this.table.faceUpCards(this.dealer);
       await this.view.renderCards(this.dealer);
       await sleep(1000);
       await this.decideDealerAction(this.dealer);
+      await sleep(1000);
       await this.table.proceedGamePhase();
       this.haveTurn();
     }
   }
 
-  private async assignInitialHands(dealer: Player, playersWithoutDealer: Player[]) {
+  private async assignInitialHands(dealer: Player, AIsAndUser: Player[]) {
     if (!this.table) return;
 
     // playerにカードを配る
@@ -142,11 +149,11 @@ export class Controller {
     await sleep(1000);
     await this.view.renderCards(dealer);
     await sleep(1000);
-    await playersWithoutDealer.forEach((player) => {
+    await AIsAndUser.forEach((player) => {
       this.view.renderCards(player);
     });
 
-    await playersWithoutDealer.forEach((player) => {
+    await AIsAndUser.forEach((player) => {
       if (player.isBlackJack()) {
         this.view.updateStatus(player, 'blackjack');
       }

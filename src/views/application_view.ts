@@ -33,15 +33,15 @@ export class View {
     const startBtn = document.getElementById('start-button') as HTMLElement;
 
     startBtn.addEventListener('click', () => {
-      if(nameInput.value.length > 10){
-        alert("10文字以内で入力して下さい")
-        nameInput.value = ""
-        return
+      if (nameInput.value.length > 10) {
+        alert('10文字以内で入力して下さい');
+        nameInput.value = '';
+        return;
       }
-      if(nameInput.value === "AI1" || nameInput.value === "AI2"){
-        alert("その名前は使うことができません")
-        nameInput.value = ""
-        return
+      if (nameInput.value === 'AI1' || nameInput.value === 'AI2') {
+        alert('その名前は使うことができません');
+        nameInput.value = '';
+        return;
       }
       this.controller.startGame(nameInput.value, gameTypeSelect.value);
     });
@@ -50,14 +50,17 @@ export class View {
   public renderTable(table: Table) {
     const players = table.players;
     const betDenomination = table.betDenomination;
-    let chips: number = 400
+    let chips: number = 400;
 
     players.forEach((player) => {
       if (player.type === 'house') this.renderHouse(player);
       else if (player.type === 'ai') this.renderAI(player);
       else {
-        if(player.chips) chips = player.chips
+        if (player.chips) chips = player.chips;
         this.renderUser(player);
+      }
+      if(player.isGameOver){
+        this.updateStatus(player, null)
       }
     });
 
@@ -218,7 +221,7 @@ export class View {
       console.log('error renderUserResultModal');
       return;
     }
-    const NEXT_GAME_BTN = "next_game-btn"
+    const NEXT_GAME_BTN = 'next_game-btn';
 
     userResultSpace.innerHTML = `
           <div>
@@ -229,13 +232,13 @@ export class View {
     // modalを表示
     userResultSpace.classList.remove('hidden');
 
-    const nextGameBtn = document.getElementById(NEXT_GAME_BTN)
-    if(!nextGameBtn) return
+    const nextGameBtn = document.getElementById(NEXT_GAME_BTN);
+    if (!nextGameBtn) return;
 
-    nextGameBtn.addEventListener("click", () => {
+    nextGameBtn.addEventListener('click', () => {
       userResultSpace.classList.add('hidden');
-      this.controller.nextGame()
-    })
+      this.controller.nextGame();
+    });
   }
 
   public renderHouse(player: Player) {
@@ -299,6 +302,7 @@ export class View {
     `;
   }
 
+  // TODO: refactoring
   private renderBet(players: Player[]) {
     const betSpace = document.getElementById('bet-space');
     if (!betSpace) {
@@ -312,12 +316,22 @@ export class View {
       console.log('error in renderBet');
       return;
     }
-
-    betSpace.innerHTML = `
-    <div id="${AIs[0].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[0].betAmount}</div>
+    betSpace.innerHTML = '';
+    if (AIs[0].betAmount !== 0) {
+      betSpace.innerHTML += `
+      <div id="${AIs[0].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[0].betAmount}</div>
+      `;
+    }
+    if (user.betAmount !== 0) {
+      betSpace.innerHTML += `
     <div id="${user.name}-betmoney" class="mt-24 rounded-full h-12 w-12 flex items-center justify-center bg-white shadow-lg text-gray-800 text-sm">${user.betAmount}</div>
+    `;
+    }
+    if (AIs[1].betAmount !== 0) {
+      betSpace.innerHTML += `
     <div id="${AIs[1].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[1].betAmount}</div>
     `;
+    }
   }
 
   public renderCards(player: Player) {
@@ -357,18 +371,18 @@ export class View {
     });
   }
 
-  public renderLogs(logs: string[]){
-    const logContainer = document.getElementById("log")
-    if(!logContainer){
-      console.log("error in renderLogs")
-      return
+  public renderLogs(logs: string[]) {
+    const logContainer = document.getElementById('log');
+    if (!logContainer) {
+      console.log('error in renderLogs');
+      return;
     }
 
-    logs.forEach(log => {
+    logs.forEach((log) => {
       logContainer.innerHTML += `
       <p class="text-white text-sm md:text-lg">${log}</p>
-      `
-    })
+      `;
+    });
   }
 
   public updateStatus(player: Player, status: Status) {
@@ -377,6 +391,12 @@ export class View {
       console.log('error in updateStatus');
       return;
     }
+
+    if (player.isGameOver) {
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">GAME OVER</span>`;
+      return;
+    }
+
     if (status === 'stand') {
       statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>`;
     } else if (status === 'hit') {
