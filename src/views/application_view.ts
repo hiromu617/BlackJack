@@ -338,13 +338,13 @@ export class View {
         if (player.type === 'house' || player.type === 'user') {
           cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-white', 'rounded', 'shadow', 'text-center');
           cardDiv.innerHTML = `
-          <img src="/img/${card.suit}.png" class="h-10 m-auto" />
+          <img src="${card.suit}.png" class="h-10 m-auto" />
           <span class="absolute top-0 left-1 text-2xl mt-2">${card.rank}</span>
           `;
         } else if (player.type === 'ai') {
           cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-16', 'h-24', 'bg-white', 'rounded', 'shadow', 'text-center');
           cardDiv.innerHTML = `
-          <img src="/img/${card.suit}.png" class="h-8 m-auto" />
+          <img src="${card.suit}.png" class="h-8 m-auto" />
           <span class="absolute top-0 left-1 text-xl mt-2">${card.rank}</span>
           `;
         }
