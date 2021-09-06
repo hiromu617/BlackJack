@@ -80,9 +80,9 @@ export class View {
         <div class="h-2/6 w-full flex justify-center">
           <div id="house-container" class="h-full min:w-1/3"></div>
         </div>
-        <div class="h-2/6 w-full flex relative justify-around">
+        <div class="h-2/6 w-full flex relative justify-between">
           <div id="${ai_names[0]}-container" class="h-full min:w-1/3"></div>
-          <div id="bet-space" class="h-full absolute w-36 flex justify-center items-center gap-0"></div>
+          <div id="bet-space" class="h-full absolute right-1/2 transform translate-x-1/2 w-36 flex justify-center items-center gap-0"></div>
           <div id="${ai_names[1]}-container" class="h-full min:w-1/3"></div>
         </div>
         <div class="h-2/6 w-full flex justify-center">
