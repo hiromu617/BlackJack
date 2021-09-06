@@ -52,6 +52,7 @@ export class View {
     const betDenomination = table.betDenomination;
     let chips: number = 400;
 
+    // playerをレンダリング
     players.forEach((player) => {
       if (player.type === 'house') this.renderHouse(player);
       else if (player.type === 'ai') this.renderAI(player);
@@ -65,15 +66,11 @@ export class View {
     });
 
     if (table.gamePhase === 'betting') {
+      // betModalをレンダリング
       this.renderBetOperationModal(chips, betDenomination);
     } else if (table.gamePhase === 'acting') {
-      // TODO
+      // betをレンダリング
       this.renderBet(players);
-      // this.renderOperaion();
-    } else if (table.gamePhase === 'evaluatingWinner') {
-      // TODO
-    } else if (table.gamePhase === 'gameOver') {
-      // TODO
     }
   }
 
