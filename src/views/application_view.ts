@@ -50,15 +50,19 @@ export class View {
   public renderTable(table: Table) {
     const players = table.players;
     const betDenomination = table.betDenomination;
+    let chips: number = 400
 
     players.forEach((player) => {
       if (player.type === 'house') this.renderHouse(player);
       else if (player.type === 'ai') this.renderAI(player);
-      else this.renderUser(player);
+      else {
+        if(player.chips) chips = player.chips
+        this.renderUser(player);
+      }
     });
 
     if (table.gamePhase === 'betting') {
-      this.renderBetOperationModal(400, betDenomination);
+      this.renderBetOperationModal(chips, betDenomination);
     } else if (table.gamePhase === 'acting') {
       // TODO
       this.renderBet(players);

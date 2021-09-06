@@ -127,7 +127,7 @@ export class Table {
         return;
       } else {
         // push
-        if(player.type === "user") this.userResult = `${player.name} push ${player.betAmount}`
+        if(player.type === "user") this.userResult = `${player.name} push`
         this.resultLog.push(`${player.name} push`);
         if (player.status === 'double') {
           player.chips += Math.round(player.betAmount / 2);
