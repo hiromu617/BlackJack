@@ -54,10 +54,12 @@ export class Controller {
       this.view.renderTable(table);
       this.handleActingPhase();
     } else if (table.gamePhase === 'evaluatingWinner') {
-      // TODO
       const logs = this.table.evaluateWinner()
-      console.log(logs)
       this.view.renderLogs(logs)
+      this.table.resetTable()
+      this.table.proceedGamePhase()
+      this.actionPhase = "assginCards"
+      this.haveTurn()
     } else if (table.gamePhase === 'gameOver') {
       // TODO
     }
@@ -119,6 +121,7 @@ export class Controller {
       await this.table.faceUpCards(this.dealer);
       await this.view.renderCards(this.dealer);
       await this.decideDealerAction(this.dealer);
+      await sleep(2000)
       await this.table.proceedGamePhase();
       this.haveTurn();
     }

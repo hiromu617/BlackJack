@@ -81,7 +81,7 @@ export class View {
       </div>
       <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-5 align-center"></div>
       <div id="bet-operation-space" class="hidden z-20 fixed w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
-      <div id="log" class="overscroll-auto z-5 fixed pb-2 w-1/3 h-52 top-0 right-0 text-center"></div>
+      <div id="log" class="overflow-scroll z-5 fixed pb-2 w-1/3 h-52 top-0 right-0 text-center"></div>
     </section>
     `;
   }

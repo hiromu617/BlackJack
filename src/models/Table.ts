@@ -32,10 +32,11 @@ export class Table {
     });
   }
 
-  // プレイヤーのハンドをリセットする
-  blackjackClearPlayerHands() {
+  // プレイヤーのハンドとステータスをリセットする
+  blackjackClearPlayerHandsAndStatus() {
     this.players.forEach((player) => {
       player.hand = [];
+      player.status = null;
     });
   }
 
@@ -134,30 +135,30 @@ export class Table {
     return this.resultLog;
   }
 
-  // 現在のターンのプレイヤーを返す
-  getTurnPlayer(): Player {
-    return this.players[this.turnCounter];
-  }
+  // // 現在のターンのプレイヤーを返す
+  // getTurnPlayer(): Player {
+  //   return this.players[this.turnCounter];
+  // }
 
-  // ラウンドが終了する前の各プレイヤーの状態を返す
-  blackjackEvaluateAndGetRoundResults(): string {
-    return '';
-  }
+  // // ラウンドが終了する前の各プレイヤーの状態を返す
+  // blackjackEvaluateAndGetRoundResults(): string {
+  //   return '';
+  // }
 
-  // 最後のプレイヤーかどうか
-  onLastPlayer(): boolean {
-    return this.turnCounter === this.players.length - 1;
-  }
+  // // 最後のプレイヤーかどうか
+  // onLastPlayer(): boolean {
+  //   return this.turnCounter === this.players.length - 1;
+  // }
 
-  // 最初のプレイヤーかどうか
-  onFirstPlayer(): boolean {
-    return this.turnCounter === 0;
-  }
+  // // 最初のプレイヤーかどうか
+  // onFirstPlayer(): boolean {
+  //   return this.turnCounter === 0;
+  // }
 
-  // 全てのプレイヤーのアクションが終了したかどうか
-  allPlayerActionsResolved(): boolean {
-    return true;
-  }
+  // // 全てのプレイヤーのアクションが終了したかどうか
+  // allPlayerActionsResolved(): boolean {
+  //   return true;
+  // }
 
   // phaseを進める
   proceedGamePhase(isGameOver?: boolean) {
@@ -210,7 +211,7 @@ export class Table {
         console.log('error in actionAndReturnIsBust');
         return false;
       }
-      this.resultLog.push(`${player.name} lose ${Math.round(player.betAmount / 2)}`)
+      this.resultLog.push(`${player.name} lose ${Math.round(player.betAmount / 2)}`);
       player.chips += Math.round(player.betAmount / 2);
       player.betAmount = 0;
       return false;
@@ -237,5 +238,12 @@ export class Table {
   // playerのハンドを表向きにする
   public faceUpCards(player: Player) {
     player.hand.forEach((card) => card.isDownCard && card.faceUp());
+  }
+
+  // テーブルをリセット
+  public resetTable() {
+    this.blackjackClearPlayerHandsAndStatus();
+    this.deck.resetDeck();
+    this.resultLog = ["-----------"];
   }
 }
