@@ -85,18 +85,18 @@ export class View {
           <div id="house-container" class="h-full min:w-1/3"></div>
         </div>
         <div class="h-2/6 w-full flex relative justify-between">
-          <div id="${ai_names[0]}-container" class="h-full min:w-1/3"></div>
-          <div id="bet-space" class="h-full absolute right-1/2 transform translate-x-1/2 w-36 flex justify-center items-center gap-0"></div>
-          <div id="${ai_names[1]}-container" class="h-full min:w-1/3"></div>
+          <div id="${ai_names[0]}-container" class="z-10 h-full min:w-1/3"></div>
+          <div id="bet-space" class="z-0 h-full absolute right-1/2 transform translate-x-1/2 w-24 md:w-36 flex justify-center items-center gap-0"></div>
+          <div id="${ai_names[1]}-container" class="z-10 h-full min:w-1/3"></div>
         </div>
         <div class="h-2/6 w-full flex justify-center">
           <div id="user-container" class="bg-green-700 h-full min:w-2/5"></div>
         </div>
       </div>
-      <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-5 align-center"></div>
-      <div id="bet-operation-space" class="hidden z-20 fixed w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
-      <div id="user-result-space" class="hidden z-20 fixed transform -translate-y-1/2 w-1/3 h-1/3 top-1/2 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
-      <div id="log" class="overflow-scroll z-5 fixed pb-2 w-1/3 h-52 top-0 right-0 text-center"></div>
+      <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-2 md:gap-5 align-center"></div>
+      <div id="bet-operation-space" class="hidden z-20 fixed w-4/5 md:w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
+      <div id="user-result-space" class="hidden z-20 fixed transform -translate-y-1/2 w-4/5 md:w-1/3 h-1/3 top-1/2 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
+      <div id="log" class="overflow-scroll z-5 fixed pb-2 w-1/3 h-32 md:h-52 top-0 right-0 text-center"></div>
     </section>
     `;
   }
@@ -108,10 +108,10 @@ export class View {
       return;
     }
     operaionSpace.innerHTML = `
-    <button id="surrender" class="rounded-full h-24 w-24 flex items-center justify-center bg-red-500 hover:bg-red-600 disabled:opacity-50 shadow-lg text-white text-sm">SURRENDER</button>
-    <button id="stand" class="rounded-full h-24 w-24 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 shadow-lg text-white">STAND</button>
-    <button id="hit" class="rounded-full h-24 w-24 flex items-center justify-center bg-blue-500 hover:bg-blue-600 disabled:opacity-50 shadow-lg text-white">HIT</button>
-    <button id="double" class="rounded-full h-24 w-24 flex items-center justify-center bg-purple-500 hover:bg-purple-600 disabled:opacity-50 shadow-lg text-white">DOUBLE</button>
+    <button id="surrender" class="rounded-full h-20 w-20 md:h-24 md:w-24 flex items-center justify-center bg-red-500 hover:bg-red-600 disabled:opacity-50 shadow-lg text-white text-sm">SURRENDER</button>
+    <button id="stand" class="rounded-full h-20 w-20 md:h-24 md:w-24 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 shadow-lg text-white">STAND</button>
+    <button id="hit" class="rounded-full h-20 w-20 md:h-24 md:w-24 flex items-center justify-center bg-blue-500 hover:bg-blue-600 disabled:opacity-50 shadow-lg text-white">HIT</button>
+    <button id="double" class="rounded-full h-20 w-20 md:h-24 md:w-24 flex items-center justify-center bg-purple-500 hover:bg-purple-600 disabled:opacity-50 shadow-lg text-white">DOUBLE</button>
     `;
 
     const surrenderBtn = document.getElementById('surrender');
@@ -256,7 +256,7 @@ export class View {
     }
     houseContainer.innerHTML = `
     <div class="mb-2">
-      <span class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
+      <span class="shadow text-xl md:text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
     </div>
     <div id="${player.name}-status" class="h-4 flex justify-center items-center gap-2">
     </div>
@@ -273,11 +273,11 @@ export class View {
     }
     userContainer.innerHTML = `
     <div class="mb-2">
-      <span id="user-name" class="shadow text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
+      <span id="user-name" class="shadow text-xl md:text-2xl inline-block bg-white rounded-full px-4 py-1 text-xl font-semibold text-gray-800">${player.name}</span>
     </div>
     <div class="h-4 flex justify-center items-center gap-2">
       <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-      <span id="${player.name}-money" class="text-white">${player.chips}</span>
+      <span id="${player.name}-money" class="text-white text-sm">${player.chips}</span>
       <div id="${player.name}-status">
       </div>
     </div>
@@ -295,15 +295,15 @@ export class View {
     }
     aiContainer.innerHTML = `
     <div class="mb-2">
-      <span class="shadow text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">${player.name}</span>
+      <span class="shadow text-xl md:text-2xl inline-block bg-gray-700 rounded-full px-4 py-1 text-xl font-semibold text-white">${player.name}</span>
     </div>
       <div class="h-4 flex justify-center items-center gap-2">
         <span class="rounded-full h-4 w-4 flex items-center justify-center bg-yellow-600 shadow-lg text-white text-sm">c</span>
-        <span id="${player.name}-money" class="text-white">${player.chips}</span>
+        <span id="${player.name}-money" class="text-white text-sm">${player.chips}</span>
         <div id="${player.name}-status">
         </div>
       </div>
-    <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
+    <div id="${player.name}-cards-container" class="flex gap-0.5 md:gap-2 align-center justify-center mt-3">
     </div>
     `;
   }
@@ -325,17 +325,17 @@ export class View {
     betSpace.innerHTML = '';
     if (AIs[0].betAmount !== 0) {
       betSpace.innerHTML += `
-      <div id="${AIs[0].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[0].betAmount}</div>
+      <div id="${AIs[0].name}-betmoney" class="absolute left-0 rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[0].betAmount}</div>
       `;
     }
     if (user.betAmount !== 0) {
       betSpace.innerHTML += `
-    <div id="${user.name}-betmoney" class="mt-24 rounded-full h-12 w-12 flex items-center justify-center bg-white shadow-lg text-gray-800 text-sm">${user.betAmount}</div>
+    <div id="${user.name}-betmoney" class="absolute bottom-5 rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center bg-white shadow-lg text-gray-800 text-sm">${user.betAmount}</div>
     `;
     }
     if (AIs[1].betAmount !== 0) {
       betSpace.innerHTML += `
-    <div id="${AIs[1].name}-betmoney" class="rounded-full h-12 w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[1].betAmount}</div>
+    <div id="${AIs[1].name}-betmoney" class="absolute right-0 rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center bg-gray-700 shadow-lg text-white text-sm">${AIs[1].betAmount}</div>
     `;
     }
   }
@@ -399,22 +399,22 @@ export class View {
     }
 
     if (player.isGameOver) {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">GAME OVER</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-xs md:text-sm uppercase">GAME OVER</span>`;
       return;
     }
 
     if (status === 'stand') {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-sm">stand</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-yellow-500 shadow-lg text-white text-xs md:text-sm">stand</span>`;
     } else if (status === 'hit') {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-sm uppercase">hit</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-blue-500 shadow-lg text-white text-xs md:text-sm uppercase">hit</span>`;
     } else if (status === 'surrender') {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">surrender</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-xs md:text-sm uppercase">surrender</span>`;
     } else if (status === 'double') {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-sm uppercase">double</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-purple-500 shadow-lg text-white text-xs md:text-sm uppercase">double</span>`;
     } else if (status === 'bust') {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-sm uppercase">bust</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-red-500 shadow-lg text-white text-xs md:text-sm uppercase">bust</span>`;
     } else if (status === 'blackjack') {
-      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-gray-800 shadow-lg text-white text-sm uppercase">BJ</span>`;
+      statusDiv.innerHTML = `<span class="rounded-full px-2 bg-gray-800 shadow-lg text-white text-xs md:text-sm uppercase">BJ</span>`;
     } else if (status === null) {
       statusDiv.innerHTML = ``;
     }
