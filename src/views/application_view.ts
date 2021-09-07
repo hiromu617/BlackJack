@@ -100,7 +100,7 @@ export class View {
         </a>
       </div>
       <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-2 md:gap-5 align-center"></div>
-      <div id="bet-operation-space" class="hidden z-20 fixed w-4/5 md:w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
+      <div id="bet-operation-space" class="hidden z-20 fixed w-4/5 md:w-1/3 h-2/3 top-1/2 transform -translate-y-1/2 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
       <div id="user-result-space" class="hidden z-20 fixed transform -translate-y-1/2 w-4/5 md:w-1/3 h-1/3 top-1/2 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
       <div id="log" class="overflow-scroll z-5 fixed pb-2 w-1/3 h-32 md:h-52 top-0 right-0 text-center"></div>
     </section>
@@ -266,7 +266,7 @@ export class View {
     </div>
     <div id="${player.name}-status" class="h-4 flex justify-center items-center gap-2">
     </div>
-    <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
+    <div id="${player.name}-cards-container" class="overflow-scroll flex gap-2 align-center justify-center mt-3">
     </div>
     `;
   }
@@ -287,7 +287,7 @@ export class View {
       <div id="${player.name}-status">
       </div>
     </div>
-    <div id="${player.name}-cards-container" class="flex gap-2 align-center justify-center mt-3">
+    <div id="${player.name}-cards-container" class="overflow-scroll flex gap-2 align-center justify-center mt-3">
     </div>
     `;
   }
