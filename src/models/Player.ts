@@ -15,11 +15,11 @@ export class Player {
     this.isGameOver = false;
   }
 
-  isBlackJack(): boolean {
+  public isBlackJack(): boolean {
     return this.getHandScore() === 21 && this.hand.length === 2;
   }
 
-  getHandScore(): number {
+  public getHandScore(): number {
     let score = 0;
     this.hand.forEach((card) => {
       score += card.getRankNumber();

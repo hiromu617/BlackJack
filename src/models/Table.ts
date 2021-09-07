@@ -3,15 +3,13 @@ import { Deck } from './Deck';
 import { Card } from './Card';
 
 export class Table {
-  public turnCounter: number;
   public gamePhase: 'betting' | 'acting' | 'evaluatingWinner' | 'gameOver';
   public resultLog: string[];
   public userResult: string;
-  public deck: Deck;
-  public players: Player[];
+  public readonly deck: Deck;
+  public readonly players: Player[];
 
-  constructor(public gameType: 'blackjack', public betDenomination: number[], name: string) {
-    this.turnCounter = 0;
+  constructor(public readonly gameType: 'blackjack', public readonly betDenomination: number[], readonly name: string) {
     this.gamePhase = 'betting';
     this.resultLog = [];
     this.userResult = '';
@@ -20,7 +18,7 @@ export class Table {
   }
 
   // playerにカードを２枚づつ配る
-  blackjackAssignPlayerHands() {
+  public blackjackAssignPlayerHands() {
     this.players.forEach((player) => {
       if (player.isGameOver) return;
       const card1 = this.deck.drawOne();
@@ -36,7 +34,7 @@ export class Table {
   }
 
   // プレイヤーのハンドとステータスをリセットする
-  blackjackClearPlayerHandsAndStatusAndBetAmount() {
+  private blackjackClearPlayerHandsAndStatusAndBetAmount() {
     this.players.forEach((player) => {
       player.hand = [];
       player.betAmount = 0;
@@ -45,7 +43,7 @@ export class Table {
   }
 
   // 勝敗を評価する
-  evaluateWinner(): { userResult: string; resultLog: string[] } {
+  public evaluateWinner(): { userResult: string; resultLog: string[] } {
     const dealer = this.players.find((player) => player.type === 'house');
     const AIsAndUser = this.players.filter((player) => player.type !== 'house');
     if (!dealer) return { userResult: 'error', resultLog: ['error'] };
@@ -111,7 +109,7 @@ export class Table {
   }
 
   // phaseを進める
-  proceedGamePhase(isGameOver?: boolean) {
+  public proceedGamePhase(isGameOver?: boolean) {
     if (this.gamePhase === 'betting') this.gamePhase = 'acting';
     else if (this.gamePhase === 'acting') this.gamePhase = 'evaluatingWinner';
     else if (this.gamePhase === 'evaluatingWinner') {
@@ -120,15 +118,14 @@ export class Table {
     }
   }
 
-  betUser(user: Player, betMoney: number) {
+  public betUser(user: Player, betMoney: number) {
     if (!user.chips) return;
 
     user.betAmount = betMoney;
     user.chips -= betMoney;
   }
 
-  betAI(ai: Player) {
-    // console.log(ai)
+  public betAI(ai: Player) {
     if (!ai.chips) return;
     if (ai.chips <= 0) return;
     // TODO: AIのベット額の決め方
@@ -138,7 +135,7 @@ export class Table {
   }
 
   // ActionののちBustかどうかを返す。
-  actionAndReturnIsBust(player: Player, type: ActionType): boolean {
+  public actionAndReturnIsBust(player: Player, type: ActionType): boolean {
     if (type === 'stand') {
       player.status = type;
       return false;

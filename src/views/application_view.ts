@@ -208,7 +208,7 @@ export class View {
 
       // close modal
       betOperationSpace.classList.add('hidden');
-      this.controller.handleBetPhase(betMoneyNum);
+      this.controller.handleBettingPhase(betMoneyNum)
     });
   }
 

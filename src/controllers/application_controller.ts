@@ -26,6 +26,7 @@ export class Controller {
     if (name === '') name = 'User';
 
     this.table = new Table('blackjack', [5, 10, 50, 100], name);
+
     const dealer = this.table.players.find((player) => player.type === 'house');
     const AIsAndUser = this.table.players.filter((player) => player.type !== 'house');
     const user = this.table.players.find((player) => player.type === 'user');
@@ -49,8 +50,10 @@ export class Controller {
     const table = this.table;
 
     if (table.gamePhase === 'betting') {
+      // テーブルをレンダリング
       this.view.renderTable(table);
     } else if (table.gamePhase === 'acting') {
+      // テーブルをレンダリングし直す
       this.view.renderTable(table);
       this.handleActingPhase();
     } else if (table.gamePhase === 'evaluatingWinner') {
@@ -67,6 +70,7 @@ export class Controller {
         return;
       }
 
+      // ログとユーザーの結果を表示
       this.view.renderLogs(resultLog);
       this.view.renderUserResultModal(userResult);
 
@@ -89,9 +93,10 @@ export class Controller {
 
   // userがbetを決定すると呼ばれる
   // AI, Userのベット額を決定
-  public handleBetPhase(userBetMoney: number) {
+  public handleBettingPhase(userBetMoney: number) {
     if (!this.table) return;
 
+    // 各playerがbetする
     this.table.players.forEach((player) => {
       if (player.type === 'house') return;
       else if (player.type === 'ai') this.table?.betAI(player);
@@ -102,32 +107,22 @@ export class Controller {
     this.haveTurn();
   }
 
+  // "asignCards" => "userAndAIAction" => "dealerAction"で回す
   private async handleActingPhase() {
     if (!this.table || !this.dealer) {
       console.log('error in handleActionPhase');
       return;
     }
-    /*"asignCards" => "userAndAIAction" => "dealerAction"
-      STEP1: カードを配る
-        (Dealer => AI, User)
-        ・2枚づつ, Dealerは一枚裏向き
-      STEP2: Action(surrender, stand, hit, double)
-        (AI1 => user => AI2)
-        surrender => 負けを認める、betの1/2が返ってくる
-        stand =>　現在のカードで勝負
-        hit =>  カードを一枚追加, bustチェック
-        double =>　ベットを２倍にしてカードを一枚ひく、２枚配られた後のみ可能、bustチェック
-      STEP3: Dealerのaction
-        ・裏向きのカードを公開する
-        ・17以上になるまでカードを引く, bustチェック
-     */
+
     if (this.actionPhase === 'assginCards') {
+      // カードを配る
       this.assignInitialHands(this.dealer, this.AIsAndUser);
     } else if (this.actionPhase === 'userAndAIAction') {
       const AIs = this.AIsAndUser.filter((player) => player.type === 'ai');
       const user = this.AIsAndUser.find((player) => player.type === 'user');
 
       if (!AIs || !user) return;
+
       if (!AIs[0].isGameOver) {
         await this.decideAIAction(AIs[0]);
       }
@@ -135,20 +130,25 @@ export class Controller {
         await this.decideAIAction(AIs[1]);
       }
       await sleep(1000);
+      // ユーザーのアクション
       await this.view.renderOperaion();
 
+      // BJの時は次に進む
       if (user.isBlackJack()) {
         await this.view.updateOperation(user);
         this.actionPhase = 'dealerAction';
         this.handleActingPhase();
       }
     } else if (this.actionPhase === 'dealerAction') {
-      await sleep(1000);
+      await sleep(1500);
+      // カードを表向きにする
       await this.table.faceUpCards(this.dealer);
       await this.view.renderCards(this.dealer);
       await sleep(1000);
+      // dealerのアクション
       await this.decideDealerAction(this.dealer);
       await sleep(1000);
+      // evaluateWinnerに進む
       await this.table.proceedGamePhase();
       this.haveTurn();
     }
@@ -169,6 +169,7 @@ export class Controller {
       this.view.renderCards(player);
     });
 
+    // playerがBJの時、statusをupdateする
     await AIsAndUser.forEach((player) => {
       if (player.isBlackJack()) {
         this.view.updateStatus(player, 'blackjack');
@@ -308,6 +309,7 @@ export class Controller {
       }
     }
   }
+
   // AIとDealerのアクションを行う, bustしたかどうかを返す
   public handleAiAndDealerAction(actionType: ActionType, AI: Player): boolean {
     if (!this.table) return false;

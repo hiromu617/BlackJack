@@ -1,7 +1,7 @@
 import { Card, Suit } from './Card';
 
 export class Deck {
-  cards: Card[];
+  private cards: Card[];
 
   constructor(readonly gameType: 'blackjack') {
     this.cards = [];
@@ -9,7 +9,7 @@ export class Deck {
   }
 
   // デッキをリセットしてシャッフルする
-  resetDeck() {
+  public resetDeck() {
     this.cards.length = 0;
     const suits: Suit[] = ['H', 'S', 'C', 'D'];
     suits.forEach((suit) => {
@@ -19,17 +19,16 @@ export class Deck {
     console.log(this.cards);
   }
 
-  // TODO: バグあるかも、シャッフルできてない？
-  shuffle() {
+  // 先頭のカードを返す
+  public drawOne() {
+    return this.cards.pop();
+  }
+
+  private shuffle() {
     for (let i = this.cards.length; 1 < i; i--) {
       let k = Math.floor(Math.random() * i);
       [this.cards[k], this.cards[i - 1]] = [this.cards[i - 1], this.cards[k]];
     }
     console.log(this.cards);
-  }
-
-  // 先頭のカードを返す
-  drawOne() {
-    return this.cards.pop();
   }
 }
