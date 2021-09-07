@@ -65,8 +65,8 @@ export class Table {
         if (player.type === 'user') this.userResult = log;
         this.resultLog.push(log);
 
-        // playerがBJでdealerがBJでない、またはplayerがBustしておらずplayerの方がスコアが高い
-      } else if ((isPlayerBJ && !isDealerBJ) || (!isPlayerBust && playerScore > dealerScore)) {
+        // playerがBJでdealerがBJでない, playerがbustでなくdealerがbust,またはplayerがBustしておらずplayerの方がスコアが高い
+      } else if ((isPlayerBJ && !isDealerBJ) || (isDealerBust && !isPlayerBust) ||(!isPlayerBust && playerScore > dealerScore)) {
         const log = this.evaluateMoveAndReturnLog(player, 'win', isPlayerBJ);
         if (player.type === 'user') this.userResult = log;
         this.resultLog.push(log);

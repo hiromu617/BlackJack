@@ -8,11 +8,17 @@ export class Player {
   public status: Status;
   public hand: Card[];
   public isGameOver: boolean;
+  public AIType?: "gampler" | "chiken";
+
   constructor(public name: string, public type: PlayerType, public gameType: string, public chips?: number) {
     this.betAmount = 0;
     this.hand = [];
     this.status = null;
     this.isGameOver = false;
+    if(this.type === "ai"){
+      if(Math.floor(Math.random()*2 + 1) === 1) this.AIType = "gampler"
+      else this.AIType = "chiken"
+    }
   }
 
   public isBlackJack(): boolean {
@@ -33,4 +39,15 @@ export class Player {
     }
     return score;
   }
+
+  // public decideAIBetMoney():number{
+  //   if(!this.AIType) return 100
+  //   if(this.chips === undefined) return 100
+
+  //   if(this.AIType === "gampler"){
+  //     Math.random() * (Math.round(this.chips / 5))
+  //   }else{
+
+  //   }
+  // }
 }

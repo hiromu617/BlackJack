@@ -2,6 +2,7 @@ import { View } from '../views/application_view';
 import { Table } from '../models/Table';
 import { Player, ActionType } from '../models/Player';
 import { sleep } from '../utils/sleep';
+import { returnBoolFromProbability } from '../utils/returnBoolFromProbability.ts';
 // tableを操作してゲームを進める
 export class Controller {
   private view: View;
@@ -181,8 +182,19 @@ export class Controller {
   }
 
   private async decideAIAction(AI: Player) {
-    // TODO: AIのアクションの決定, double, surrender
-    // 初手が16以上ならstand
+    let threshold = 16;
+    let surrenderProbability = 10;
+    let doubleProbability = 10;
+
+    if (AI.AIType === 'gampler') {
+      threshold = 17;
+      surrenderProbability = 5;
+      doubleProbability = 10;
+    } else {
+      threshold = 15;
+      surrenderProbability = 10;
+      doubleProbability = 5;
+    }
 
     await sleep(1000);
 
@@ -191,7 +203,18 @@ export class Controller {
       return;
     }
 
-    if (AI.getHandScore() >= 16) {
+    // スコアが11以下の時のみdouble
+    if (AI.getHandScore() <= 11 && returnBoolFromProbability(doubleProbability)) {
+      this.handleAiAndDealerAction('double', AI);
+      return;
+    }
+
+    if (returnBoolFromProbability(surrenderProbability)) {
+      this.handleAiAndDealerAction('surrender', AI);
+      return;
+    }
+
+    if (AI.getHandScore() >= threshold) {
       this.handleAiAndDealerAction('stand', AI);
       return;
     }
@@ -200,8 +223,8 @@ export class Controller {
     while (!this.handleAiAndDealerAction('hit', AI)) {
       const score = AI.getHandScore();
       await sleep(1000);
-      // 16以上になるまで引く
-      if (score > 16) {
+      // threshold以上になるまで引く
+      if (score > threshold) {
         this.handleAiAndDealerAction('stand', AI);
         await sleep(1000);
         break;
