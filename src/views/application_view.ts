@@ -60,8 +60,8 @@ export class View {
         if (player.chips) chips = player.chips;
         this.renderUser(player);
       }
-      if(player.isGameOver){
-        this.updateStatus(player, null)
+      if (player.isGameOver) {
+        this.updateStatus(player, null);
       }
     });
 
@@ -208,7 +208,7 @@ export class View {
 
       // close modal
       betOperationSpace.classList.add('hidden');
-      this.controller.handleBettingPhase(betMoneyNum)
+      this.controller.handleBettingPhase(betMoneyNum);
     });
   }
 
@@ -226,14 +226,14 @@ export class View {
           </div>
     `;
 
-    if(userLog === "GAME OVER"){
+    if (userLog === 'GAME OVER') {
       userResultSpace.innerHTML += `
       <button id=${NEXT_GAME_BTN} class="bg-red-500 border px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-blue-600">New Game</button>
-      `
-    }else{
+      `;
+    } else {
       userResultSpace.innerHTML += `
       <button id=${NEXT_GAME_BTN} class="bg-blue-500 border px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-blue-600">Next Game</button>
-      `
+      `;
     }
     // modalを表示
     userResultSpace.classList.remove('hidden');
@@ -354,22 +354,22 @@ export class View {
 
       // TODO: 条件分技が汚い
       if (card.isDownCard) {
-        cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-gray-900', 'rounded', 'shadow', 'text-center');
+        cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-16', 'h-24', 'md:w-20', 'md:h-32', 'bg-gray-900', 'rounded', 'shadow', 'text-center');
         cardDiv.innerHTML = `
         <p class="text-white text-3xl m-auto">?</p>
         `;
       } else {
         if (player.type === 'house' || player.type === 'user') {
-          cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-20', 'h-32', 'bg-white', 'rounded', 'shadow', 'text-center');
+          cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-16', 'h-24', 'md:w-20', 'md:h-32', 'bg-white', 'rounded', 'shadow', 'text-center');
           cardDiv.innerHTML = `
-          <img src="${card.suit}.png" class="h-10 m-auto" />
+          <img src="${card.suit}.png" class="h-8 md:h-10 m-auto" />
           <span class="absolute top-0 left-1 text-2xl mt-2">${card.rank}</span>
           `;
         } else if (player.type === 'ai') {
-          cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-16', 'h-24', 'bg-white', 'rounded', 'shadow', 'text-center');
+          cardDiv.classList.add('relative', 'flex', 'justify-center', 'align-ceter', 'w-8', 'h-12', 'md:w-16', 'md:h-24', 'bg-white', 'rounded', 'shadow', 'text-center');
           cardDiv.innerHTML = `
-          <img src="${card.suit}.png" class="h-8 m-auto" />
-          <span class="absolute top-0 left-1 text-xl mt-2">${card.rank}</span>
+          <img src="${card.suit}.png" class="h-4 md:h-8 m-auto" />
+          <span class="absolute top-0 left-1 text-xs md:text-xl md:mt-2">${card.rank}</span>
           `;
         }
       }
