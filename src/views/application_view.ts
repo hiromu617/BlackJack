@@ -93,6 +93,12 @@ export class View {
           <div id="user-container" class="bg-green-700 h-full min:w-2/5"></div>
         </div>
       </div>
+      <div class="fixed top-0 left-0 p-3">
+        <a class="fa-stack fa-1x" href="https://github.com/hiromu617/BlackJack" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-circle fa-stack-2x fa-inverse"></i>
+          <i class="fab fa-github fa-stack-2x" style="color: #333"></i>
+        </a>
+      </div>
       <div id="operation-space" class="z-10 fixed pb-2 w-full bottom-0 flex justify-center gap-2 md:gap-5 align-center"></div>
       <div id="bet-operation-space" class="hidden z-20 fixed w-4/5 md:w-1/3 h-2/3 top-36 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
       <div id="user-result-space" class="hidden z-20 fixed transform -translate-y-1/2 w-4/5 md:w-1/3 h-1/3 top-1/2 bg-white rounded-2xl flex justify-center items-center flex-col gap-10 shadow-2xl"></div>
