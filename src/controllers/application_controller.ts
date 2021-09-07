@@ -1,7 +1,7 @@
 import { View } from '../views/application_view';
 import { Table } from '../models/Table';
 import { Player, ActionType } from '../models/Player';
-import { sleep } from '../utils/sleep';
+import { sleep, randomSleep } from '../utils/sleep';
 import { returnBoolFromProbability } from '../utils/returnBoolFromProbability.ts';
 // tableを操作してゲームを進める
 export class Controller {
@@ -142,14 +142,13 @@ export class Controller {
         this.handleActingPhase();
       }
     } else if (this.actionPhase === 'dealerAction') {
-      await sleep(1500);
+      await sleep(1000);
       // カードを表向きにする
       await this.table.faceUpCards(this.dealer);
       await this.view.renderCards(this.dealer);
-      await sleep(1000);
       // dealerのアクション
       await this.decideDealerAction(this.dealer);
-      await sleep(1000);
+      await sleep(500);
       // evaluateWinnerに進む
       await this.table.proceedGamePhase();
       this.haveTurn();
@@ -199,7 +198,7 @@ export class Controller {
       doubleProbability = 5;
     }
 
-    await sleep(1000);
+    await randomSleep();
 
     if (AI.status === 'blackjack') {
       this.view.updateStatus(AI, 'blackjack');
@@ -207,7 +206,7 @@ export class Controller {
     }
 
     // スコアが11以下の時のみdouble
-    if (AI.getHandScore() <= 11 && AI.chips < AI.betAmount && returnBoolFromProbability(doubleProbability)) {
+    if (AI.getHandScore() <= 11 && AI.chips > AI.betAmount && returnBoolFromProbability(doubleProbability)) {
       this.handleAiAndDealerAction('double', AI);
       return;
     }
@@ -225,11 +224,11 @@ export class Controller {
     // bustするまでloop
     while (!this.handleAiAndDealerAction('hit', AI)) {
       const score = AI.getHandScore();
-      await sleep(1000);
+      await randomSleep();
       // threshold以上になるまで引く
       if (score > threshold) {
         this.handleAiAndDealerAction('stand', AI);
-        await sleep(1000);
+        await sleep(500);
         break;
       }
     }
@@ -237,7 +236,7 @@ export class Controller {
 
   private async decideDealerAction(Dealer: Player) {
     // Dealerは17以上までhit
-    await sleep(1000);
+    await sleep(1500);
 
     if (Dealer.status === 'blackjack') {
       this.view.updateStatus(Dealer, 'blackjack');
@@ -252,11 +251,11 @@ export class Controller {
     // bustするまでloop
     while (!this.handleAiAndDealerAction('hit', Dealer)) {
       const score = Dealer.getHandScore();
-      await sleep(2000);
+      await sleep(1500);
       // 16以上になるまで引く
       if (score >= 17) {
         this.handleAiAndDealerAction('stand', Dealer);
-        await sleep(2000);
+        await sleep(500);
         break;
       }
     }

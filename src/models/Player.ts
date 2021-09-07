@@ -45,7 +45,7 @@ export class Player {
     if (this.chips === undefined) return 100;
 
     // 0~chipsの５刻みの乱数
-    const betNum = Math.round((Math.random() * this.chips / 5) / 5) * 5;
+    const betNum = Math.round((Math.random() * this.chips) / 2 / 5) * 5;
     if (betNum === 0) return 5;
     if (betNum > this.chips) return this.chips;
     return betNum;
