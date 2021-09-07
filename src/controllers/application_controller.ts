@@ -182,7 +182,14 @@ export class Controller {
   private async decideAIAction(AI: Player) {
     // TODO: AIのアクションの決定, double, surrender
     // 初手が16以上ならstand
+
     await sleep(1000);
+
+    if (AI.status === 'blackjack') {
+      this.view.updateStatus(AI, 'blackjack');
+      return;
+    }
+
     if (AI.getHandScore() >= 16) {
       this.handleAiAndDealerAction('stand', AI);
       return;
@@ -204,6 +211,12 @@ export class Controller {
   private async decideDealerAction(Dealer: Player) {
     // Dealerは17以上までhit
     await sleep(1000);
+
+    if (Dealer.status === 'blackjack') {
+      this.view.updateStatus(Dealer, 'blackjack');
+      return;
+    }
+
     if (Dealer.getHandScore() >= 17) {
       this.handleAiAndDealerAction('stand', Dealer);
       return;

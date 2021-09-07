@@ -39,27 +39,12 @@ export class Table {
   blackjackClearPlayerHandsAndStatusAndBetAmount() {
     this.players.forEach((player) => {
       player.hand = [];
-      player.betAmount = 0
+      player.betAmount = 0;
       player.status = null;
     });
   }
 
-  /*
-  - delaerがBJ
-    - playerがBJ
-      += betAmount
-    - playerがBJでない
-      chipsそのまま(betAmountだけ減る)
-  - dealerがbust || playerの勝ち
-    - playerがBJ
-      += 2.5 * betAmount
-    - playerがBJでない
-      += 2 * betAmount
-  - dealerがbustしてない && dealerの勝ち
-    - playerがdouble
-    - playerがstand
-      chipそのまま
-  */
+  // 勝敗を評価する
   evaluateWinner(): { userResult: string; resultLog: string[] } {
     const dealer = this.players.find((player) => player.type === 'house');
     const AIsAndUser = this.players.filter((player) => player.type !== 'house');
@@ -70,62 +55,59 @@ export class Table {
     const isDealerBJ = dealer.status === 'blackjack';
 
     AIsAndUser.forEach((player) => {
-      if (player.status === 'surrender') {
-        return;
-      }
+      if (player.status === 'surrender') return;
       if (player.chips === undefined || player.chips === null) return;
       const playerScore = player.getHandScore();
       const isPlayerBust = player.status === 'bust';
       const isPlayerBJ = player.status === 'blackjack';
 
-      if (isDealerBJ) {
-        if (isPlayerBJ) {
-          // dealer, playerともにBJ => 変化なし(betAmountが戻る)
-          if (player.type === 'user') this.userResult = `${player.name} push`;
-          this.resultLog.push(`${player.name} push`);
-          player.chips += player.betAmount;
-        } else {
-          // dealerがBJ, playerがBJでない => betAmount分減る(chipsそのまま)
-          if (player.type === 'user') this.userResult = `${player.name} lose ${player.betAmount}`;
-          this.resultLog.push(`${player.name} lose ${player.betAmount}`);
-          player.betAmount = 0;
-        }
-      } else if (isDealerBust || (!isPlayerBust && dealerScore < playerScore)) {
-        if (isPlayerBJ) {
-          //  1.5 * betAmount勝ち (+= 2.5*betAmount)
-          if (player.type === 'user') this.userResult = `${player.name} win ${player.betAmount * 1.5}`;
-          this.resultLog.push(`${player.name} win ${player.betAmount * 1.5}`);
-          player.chips += 2.5 * player.betAmount;
-          player.betAmount = 0;
-          return
-        } else {
-          //  1.5 * betAmount勝ち (+= 2.5*betAmount)
-          if (player.type === 'user') this.userResult = `${player.name} win ${player.betAmount}`;
-          this.resultLog.push(`${player.name} win ${player.betAmount}`);
-          player.chips += 2 * player.betAmount;
-          player.betAmount = 0;
-          return
-        }
-      } else if (!isDealerBust && (isPlayerBust || dealerScore > playerScore)) {
-        if (player.type === 'user') this.userResult = `${player.name} lose ${player.betAmount}`;
-        this.resultLog.push(`${player.name} lose ${player.betAmount}`);
-        player.betAmount = 0;
-        return
+      // どちらもBust, またはBJでなくスコアが等しい, またはどちらもBJ
+      if ((isPlayerBust && isDealerBust) || (!isPlayerBJ && !isDealerBJ && playerScore === dealerScore) || (isPlayerBJ && isDealerBJ)) {
+        const log = this.evaluateMoveAndReturnLog(player, 'push');
+        if (player.type === 'user') this.userResult = log;
+        this.resultLog.push(log);
+
+        // playerがBJでdealerがBJでない、またはplayerがBustしておらずplayerの方がスコアが高い
+      } else if ((isPlayerBJ && !isDealerBJ) || (!isPlayerBust && playerScore > dealerScore)) {
+        const log = this.evaluateMoveAndReturnLog(player, 'win', isPlayerBJ);
+        if (player.type === 'user') this.userResult = log;
+        this.resultLog.push(log);
       } else {
-        // push
-        if (player.type === 'user') this.userResult = `${player.name} push`;
-        this.resultLog.push(`${player.name} push`);
-        if (player.status === 'double') {
-          player.chips += Math.round(player.betAmount / 2);
-          player.betAmount = 0;
-        }
-        player.chips += player.betAmount;
-        player.betAmount = 0;
-        return
+        const log = this.evaluateMoveAndReturnLog(player, 'lose');
+        if (player.type === 'user') this.userResult = log;
+        this.resultLog.push(log);
       }
     });
 
     return { userResult: this.userResult, resultLog: this.resultLog };
+  }
+
+  // chipsの移動を行いログを返す
+  private evaluateMoveAndReturnLog(player: Player, result: 'win' | 'lose' | 'push', isPlayerBJ?: boolean): string {
+    if (player.chips === undefined) return 'error';
+
+    let log = '';
+
+    if (result === 'win') {
+      // BJで勝った時は1.5もらえる
+      if (isPlayerBJ) {
+        player.chips += 2.5 * player.betAmount;
+        log = `${player.name} win ${1.5 * player.betAmount}`;
+      } else {
+        player.chips += 2 * player.betAmount;
+        log = `${player.name} win ${player.betAmount}`;
+      }
+    } else if (result === 'lose') {
+      // 負けた時はbetした額が消える
+      log = `${player.name} lose ${player.betAmount}`;
+    } else {
+      // pushの時はbetした額が戻ってくる
+      player.chips += player.betAmount;
+      log = `${player.name} push`;
+    }
+
+    player.betAmount = 0;
+    return log;
   }
 
   // phaseを進める
@@ -218,10 +200,11 @@ export class Table {
     this.resultLog = ['-----------'];
   }
 
-  public checkIsGameOver(){
-    this.players.forEach(player => {
-      if(player.chips === null || player.chips === undefined) return
-      if(player.chips <= 0) player.isGameOver = true
-    })
+  // ゲームオーバーかチェック
+  public checkIsGameOver() {
+    this.players.forEach((player) => {
+      if (player.chips === null || player.chips === undefined) return;
+      if (player.chips <= 0) player.isGameOver = true;
+    });
   }
 }
