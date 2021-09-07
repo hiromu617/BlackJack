@@ -8,16 +8,16 @@ export class Player {
   public status: Status;
   public hand: Card[];
   public isGameOver: boolean;
-  public AIType?: "gampler" | "chiken";
+  public AIType?: 'gampler' | 'chiken';
 
   constructor(public name: string, public type: PlayerType, public gameType: string, public chips?: number) {
     this.betAmount = 0;
     this.hand = [];
     this.status = null;
     this.isGameOver = false;
-    if(this.type === "ai"){
-      if(Math.floor(Math.random()*2 + 1) === 1) this.AIType = "gampler"
-      else this.AIType = "chiken"
+    if (this.type === 'ai') {
+      if (Math.floor(Math.random() * 2 + 1) === 1) this.AIType = 'gampler';
+      else this.AIType = 'chiken';
     }
   }
 
@@ -40,14 +40,14 @@ export class Player {
     return score;
   }
 
-  // public decideAIBetMoney():number{
-  //   if(!this.AIType) return 100
-  //   if(this.chips === undefined) return 100
+  public decideAIBetMoney(): number {
+    if (!this.AIType) return 100;
+    if (this.chips === undefined) return 100;
 
-  //   if(this.AIType === "gampler"){
-  //     Math.random() * (Math.round(this.chips / 5))
-  //   }else{
-
-  //   }
-  // }
+    // 0~chipsの５刻みの乱数
+    const betNum = Math.round((Math.random() * this.chips / 5) / 5) * 5;
+    if (betNum === 0) return 5;
+    if (betNum > this.chips) return this.chips;
+    return betNum;
+  }
 }

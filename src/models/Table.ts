@@ -129,7 +129,7 @@ export class Table {
     if (!ai.chips) return;
     if (ai.chips <= 0) return;
     // TODO: AIのベット額の決め方
-    const BET_MONEY = 100;
+    const BET_MONEY = ai.decideAIBetMoney();
     ai.betAmount = BET_MONEY;
     ai.chips -= BET_MONEY;
   }
