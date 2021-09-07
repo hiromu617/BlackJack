@@ -224,8 +224,17 @@ export class View {
           <div>
             <p class="text-2xl text-gray-800 font-bold">${userLog}</p>
           </div>
-          <button id=${NEXT_GAME_BTN} class="bg-blue-500 border px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-blue-600">Next Game</button>
     `;
+
+    if(userLog === "GAME OVER"){
+      userResultSpace.innerHTML += `
+      <button id=${NEXT_GAME_BTN} class="bg-red-500 border px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-blue-600">New Game</button>
+      `
+    }else{
+      userResultSpace.innerHTML += `
+      <button id=${NEXT_GAME_BTN} class="bg-blue-500 border px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-blue-600">Next Game</button>
+      `
+    }
     // modalを表示
     userResultSpace.classList.remove('hidden');
 

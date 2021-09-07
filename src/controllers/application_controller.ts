@@ -55,19 +55,35 @@ export class Controller {
       this.handleActingPhase();
     } else if (table.gamePhase === 'evaluatingWinner') {
       const { userResult, resultLog } = this.table.evaluateWinner();
-      this.view.renderLogs(resultLog);
-      this.view.renderUserResultModal(userResult);
+
       this.table.resetTable();
       this.table.checkIsGameOver();
+
+      // ユーザーがgameover
+      if (this.user?.isGameOver) {
+        this.table.proceedGamePhase(true);
+        this.actionPhase = 'assginCards';
+        this.haveTurn();
+        return;
+      }
+
+      this.view.renderLogs(resultLog);
+      this.view.renderUserResultModal(userResult);
+
+      // 次のゲーム
       this.table.proceedGamePhase();
       this.actionPhase = 'assginCards';
     } else if (table.gamePhase === 'gameOver') {
-      // TODO
+      this.view.renderUserResultModal('GAME OVER');
     }
-    table.turnCounter++;
   }
 
+  // 次のゲームに進む、ゲームオーバーの時は,新しくゲームをスタート
   public nextGame() {
+    if (this.user?.isGameOver) {
+      this.startGame(this.user.name, 'blackjack');
+      return;
+    }
     this.haveTurn();
   }
 
@@ -118,7 +134,7 @@ export class Controller {
       if (!AIs[1].isGameOver) {
         await this.decideAIAction(AIs[1]);
       }
-      await sleep(1000)
+      await sleep(1000);
       await this.view.renderOperaion();
 
       if (user.isBlackJack()) {
