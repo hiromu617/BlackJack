@@ -66,7 +66,7 @@ export class Table {
         this.resultLog.push(log);
 
         // playerがBJでdealerがBJでない, playerがbustでなくdealerがbust,またはplayerがBustしておらずplayerの方がスコアが高い
-      } else if ((isPlayerBJ && !isDealerBJ) || (isDealerBust && !isPlayerBust) ||(!isPlayerBust && playerScore > dealerScore)) {
+      } else if ((isPlayerBJ && !isDealerBJ) || (isDealerBust && !isPlayerBust) || (!isPlayerBust && playerScore > dealerScore)) {
         const log = this.evaluateMoveAndReturnLog(player, 'win', isPlayerBJ);
         if (player.type === 'user') this.userResult = log;
         this.resultLog.push(log);
@@ -167,10 +167,15 @@ export class Table {
       return false;
     } else {
       player.status = type;
-
+      if (!player.chips) return false;
       const newCard = this.deck.drawOne() as Card;
 
       player.hand.push(newCard);
+
+      if (player.chips < player.betAmount) {
+        console.log('error in double in actionAndReturnIsBust');
+      }
+      player.chips -= player.betAmount;
       player.betAmount *= 2;
 
       if (player.getHandScore() > 21) {

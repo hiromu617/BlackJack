@@ -107,7 +107,7 @@ export class View {
     `;
   }
 
-  public renderOperaion() {
+  public renderOperaion(isAbleToDouble?: boolean) {
     const operaionSpace = document.getElementById('operation-space');
     if (!operaionSpace) {
       console.log('error renderOperaion');
@@ -125,9 +125,14 @@ export class View {
     const hitBtn = document.getElementById('hit');
     const doubleBtn = document.getElementById('double');
 
+
     if (!surrenderBtn || !standBtn || !hitBtn || !doubleBtn) {
       console.log('error 130');
       return;
+    }
+
+    if(isAbleToDouble){
+      doubleBtn.setAttribute('disabled', 'true');
     }
 
     surrenderBtn.addEventListener('click', () => {

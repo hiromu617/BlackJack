@@ -132,7 +132,8 @@ export class Controller {
       }
       await sleep(1000);
       // ユーザーのアクション
-      await this.view.renderOperaion();
+      if(user.chips === undefined) return
+      await this.view.renderOperaion(user.chips < user.betAmount);
 
       // BJの時は次に進む
       if (user.isBlackJack()) {
@@ -186,6 +187,8 @@ export class Controller {
     let surrenderProbability = 10;
     let doubleProbability = 10;
 
+    if(AI.chips === undefined) return
+
     if (AI.AIType === 'gampler') {
       threshold = 17;
       surrenderProbability = 5;
@@ -204,7 +207,7 @@ export class Controller {
     }
 
     // スコアが11以下の時のみdouble
-    if (AI.getHandScore() <= 11 && returnBoolFromProbability(doubleProbability)) {
+    if (AI.getHandScore() <= 11 && AI.chips < AI.betAmount && returnBoolFromProbability(doubleProbability)) {
       this.handleAiAndDealerAction('double', AI);
       return;
     }
